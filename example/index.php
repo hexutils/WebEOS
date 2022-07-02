@@ -206,7 +206,7 @@ if ($_GET['noplots']) {
 	sort($filenames);
 	foreach ($filenames as $filename) {
 		if( ! $matchf($match,$filename) ) { continue; }
-		/// if (isset($_GET['match']) && !fnmatch('*'.$_GET['match'].'*', $filename)) continue;
+		// if (isset($_GET['match']) && !fnmatch('*'.$_GET['match'].'*', $filename)) continue;
 		$path_parts = pathinfo($filename);
 		if (PHP_VERSION_ID < 50200) {
 			$path_parts['filename'] = str_replace('.'.$path_parts['extension'],"",$path_parts['basename']);
@@ -260,7 +260,9 @@ if ($_GET['noplots']) {
 			}
 		}
 		if ($others) { print "<p>Also as ".implode(', ',$others)."</p>"; }
-		else { print "<p>Also as [none]</p>"; }
+		else { 
+            // print "<p>Also as [none]</p>"; 
+        }
 		print "</div>";
 	}
 }
@@ -272,7 +274,7 @@ if ($_GET['noplots']) {
 <?php
 foreach ($allfiles as $filename) {
     if ($_GET['noplots'] || !in_array($filename, $displayed)) {
-	    /// if (isset($_GET['match']) && !fnmatch('*'.$_GET['match'].'*', $filename)) continue;
+	    // if (isset($_GET['match']) && !fnmatch('*'.$_GET['match'].'*', $filename)) continue;
 	    if( ! $matchf($match,$filename) ) { continue; }
 	    if( fnmatch("*_thumb.*", $filename) ) {
 		    continue;
@@ -281,7 +283,7 @@ foreach ($allfiles as $filename) {
         if (is_dir($filename)) {
 		// print "<li>[DIR] <a href=\"$filename\">$filename</a></li>";
         } else {
-            if ($filename != 'index.php') {
+            if ( !in_array($filename, ['index.php','README.md'], true ) ) {
                 print "<li><a href=\"$filename\">$filename</a></li>";
             }
         }

@@ -291,8 +291,10 @@ foreach ($allfiles as $filename) {
 </ul>
 </div>
 <p>
-Like this page? <a href="https://github.com/musella/php-plots">Get it here.</a><br />
+<!--
+Like this page? <a href="https://github.com/lk11235/php-plots">Get it here.</a><br />
 Credits: Giovanni Petrucciani.
+-->
 </p>
 </body>
 </html>

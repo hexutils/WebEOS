@@ -23,7 +23,6 @@ It is tailored to people working in High Energy Physics that use ROOT (http://ro
 
 1. Profit.
 
-
 # Features
 
 1. Detect if a file is present with multiple formats.
@@ -36,6 +35,10 @@ It is tailored to people working in High Energy Physics that use ROOT (http://ro
 
 1. Overlay content of .txt version on mouse hover.
 
+1. Display root files using [JSROOT](https://root.cern.ch/js/)
+
+1. Display html interactive plots generated with [plotly](https://plotly.com/)
+
 # Example
 
-https://kang.docs.cern.ch/
+https://kang.docs.cern.ch/lkang/.example/

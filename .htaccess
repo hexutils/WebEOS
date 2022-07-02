@@ -1,0 +1,32 @@
+## CERN Signle sign-on
+##
+## Uncomment if you want to restrict the access to your files
+#
+# ShibRequireAll On
+# ShibRequireSession On
+# ShibExportAssertion On
+# SSLRequireSSL
+# AuthType Shibboleth
+# 
+# SSLVerifyClient optional
+# SSLVerifyDepth 5
+# SSLOptions +StrictRequire
+# 
+# # Authorized group 
+# Require adfs-group "cms-private"
+
+
+## Enable directory browsing
+##
+## This setting will be propagated to all subdirectories below the one containing the .htaccess file
+## To disable it for a subdirectory use "Options -Indexes" in a corresponding .htaccess file
+## Remember to remove the index file of your directory, otherwise it will be loaded in lieu of directory browsing
+#
+# Options +Indexes
+
+
+## Tell Apache this is the web index
+##
+## Put below the path to your index.php (starting from the server root)
+#
+DirectoryIndex index.php index.html index.htm /eos/user/l/lkang/www/research/index.php

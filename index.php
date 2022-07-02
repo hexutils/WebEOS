@@ -55,7 +55,7 @@ function get_bookmarks($filename,$target="_blank",$rowlen=12,$opentable="<table>
 }
 
 
-$jsroot_instance = "/.jsroot.htm";
+$jsroot_instance = "/jsroot";
 $pruned_uri = $_SERVER['REQUEST_URI'];
 if( $_SERVER['QUERY_STRING'] ) {
 	$pos = strpos($_SERVER['REQUEST_URI'], $_SERVER['QUERY_STRING']);

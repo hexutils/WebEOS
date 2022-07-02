@@ -115,8 +115,10 @@ $allfiles = glob("*");
 usort($allfiles, create_function('$a,$b', 'return filemtime($b) - filemtime($a);'));
 foreach ($allfiles as $filename) {
 	if (is_dir($filename)) {
-		$has_subs = true;
-		array_push( $folders, $filename);
+		if ($filename != 'res') {
+            		$has_subs = true;
+            		array_push( $folders, $filename);
+        	}
 	}
 }
 
@@ -279,7 +281,9 @@ foreach ($allfiles as $filename) {
         if (is_dir($filename)) {
 		// print "<li>[DIR] <a href=\"$filename\">$filename</a></li>";
         } else {
-            print "<li><a href=\"$filename\">$filename</a></li>";
+            if ($filename != 'index.php') {
+                print "<li><a href=\"$filename\">$filename</a></li>";
+            }
         }
     }
 }

@@ -17,6 +17,7 @@ examples_more = {
      { name: "logx", opt: "colz", file: "QAresults.root", item: "PIDqa/PIDqa1/ITS/hNsigmaP_ITS_electron;1" },
      { name: "logz", url: "?nobrowser&file=$$$sparsehist.root&item=c;1&palette=7", title: "LogZ plus text on several canvas" },
      { name: "userz", json: "th2ul.json.gz", opt: "colz", title: "TH2 with set user min/max, drawn with COLZ" },
+     { name: "candle", file: "candleplot.root", item: "c1;1" },
      { name: "box_same", json: "hbox_same.json.gz", title: "several histograms, drawn with box same opitons" },
      { name: "col_same", json: "hcol_same.json.gz", title: "several histograms, drawn with col same opitons" },
      { name: "docu", file: "histpainter6.root", layout: "vert33", items: ['draw_th2e','draw_scat','draw_arr','draw_box','draw_box1','draw_boxsame'], title:"several TH2 examples from THistPainter documentation page" },
@@ -31,27 +32,7 @@ examples_more = {
      { name: "symlog", opt: "col,symlogx,symlogy", file: "hsimple.root", item: "hpxpy;1", title: "symlog scale with default 1e-3 factor for constant" },
      { name: "symlog1", opt: "col,symlogx1,symlogy1", file: "hsimple.root", item: "hpxpy;1", title: "symlog scale with 1e-1 factor for constant" },
      { name: "symlog5", opt: "col,symlogx5,symlogy5", file: "hsimple.root", item: "hpxpy;1", title: "symlog scale with 1e-5 factor for constant" },
-     { name: "greek", opt: "lego2;xtitle:x=%23alpha%23pm%23sigma;ytitle:y=%23beta%23pm%23sigma;ztitle:z=%23gamma%23pm%23sigma", file: "hsimple.root", item: "hpxpy;1", title: "Greek letters on lego plot" },
-     { name: "3dscale", opt: "lego2_x3dsc50_y3dsc200", file: "hsimple.root", item: "hpxpy;1", title: "change x/y/z axis scale ratio in lego plots" },
-     { name: "movepalette", file: "movepalette.root", item: "c1;1", title: "output of movepalette.C macro with vertical and horizontal palette" }
-   ],
-   Candle : [
-     { name: "c1", opt: "candle1", file: "hsimple.root", item: "hpxpy;1", title: "candle1 option for TH2 classes" },
-     { name: "c2", opt: "candle2", title: "candle2 option for TH2 classes" },
-     { name: "c3", opt: "candle3", title: "candle3 option for TH2 classes" },
-     { name: "c4", opt: "candle4", title: "candle4 option for TH2 classes" },
-     { name: "c5", opt: "candle5", title: "candle5 option for TH2 classes" },
-     { name: "c6", opt: "candle6", title: "candle6 option for TH2 classes" },
-     { name: "v1", opt: "violin1;fill_6", title: "violin1 option for TH2 classes" },
-     { name: "v2", opt: "violin2;fill_6", title: "violin2 option for TH2 classes" },
-     { name: "ch1", opt: "candleh1", title: "candleh1 option for TH2 classes" },
-     { name: "ch2", opt: "candleh2", title: "candleh2 option for TH2 classes" },
-     { name: "ch3", opt: "candleh3", title: "candleh3 option for TH2 classes" },
-     { name: "ch4", opt: "candleh4", title: "candleh4 option for TH2 classes" },
-     { name: "ch5", opt: "candleh5", title: "candleh5 option for TH2 classes" },
-     { name: "ch6", opt: "candleh6", title: "candleh6 option for TH2 classes" },
-     { name: "vh1", opt: "violinh1;fill_6", title: "violinh1 option for TH2 classes" },
-     { name: "vh2", opt: "violinh2;fill_6", title: "violinh2 option for TH2 classes" }
+     { name: "greek", opt: "lego2;xtitle:x=%23alpha%23pm%23sigma;ytitle:y=%23beta%23pm%23sigma;ztitle:z=%23gamma%23pm%23sigma", file: "hsimple.root", item: "hpxpy;1", title: "Greek letters on lego plot" }
    ],
    TH2Poly : [
       { name: "germany", url: "?nobrowser&file=$$$th2poly.root&item=europe;1/[13]", title: "Draw single TH2PolyBin from europe map" },
@@ -66,38 +47,31 @@ examples_more = {
       { name: "pie", json: "web6canv/piechart.json.gz", title: "Testing native TPie painting" },
       { name: "trans", json: "web6canv/transparency.json.gz", title: "Testing with TGraph without axes" }
    ],
-   RCanvas : [
-      { name: "raxis", json: "rcanvas/raxis.json.gz", title: "RAxis drawings from raxis.cxx macro" },
-      { name: "rbox", json: "rcanvas/rbox.json.gz", title: "rbox.cxx macro output" },
-      { name: "rframe", json: "rcanvas/rframe.json.gz", title: "rframe.cxx macro output" },
-      { name: "rh1", json: "rcanvas/rh1.json.gz", title: "rh1.cxx macro output" },
-      { name: "rh1_large", json: "rcanvas/rh1_large.json.gz", title: "rh1_large.cxx macro output" },
-      { name: "rh1_twoscales", json: "rcanvas/rh1_twoscales.json.gz", title: "rh1_twoscales.cxx macro output" },
-      { name: "rh2", json: "rcanvas/rh2.json.gz", title: "rh2.cxx macro output" },
-      { name: "rh2_colz", json: "rcanvas/rh2_colz.json.gz", title: "rh2_colz.cxx macro output" },
-      { name: "rh2_large", json: "rcanvas/rh2_large.json.gz", title: "rh2_large.cxx macro output" },
-      { name: "rh3", json: "rcanvas/rh3.json.gz", title: "rh3.cxx macro output" },
-      { name: "rh3_large", json: "rcanvas/rh3_large.json.gz", title: "rh3_large.cxx macro output" },
-      { name: "rlegend", json: "rcanvas/rlegend.json.gz", title: "rlegend.cxx macro output" },
-      { name: "rline", json: "rcanvas/rline.json.gz", title: "rline.cxx macro output" },
-      { name: "rline_style", json: "rcanvas/rline_style.json.gz", title: "rline_style.cxx macro output" },
-      { name: "rline_width", json: "rcanvas/rline_width.json.gz", title: "rline_width.cxx macro output" },
-      { name: "rmarker", json: "rcanvas/rmarker.json.gz", title: "rmarker.cxx macro output" },
-      { name: "rpad", json: "rcanvas/rpad.json.gz", title: "rpad.cxx macro output" },
-      { name: "rpave", json: "rcanvas/rpave.json.gz", title: "rpave.cxx macro output" },
-      { name: "rstyle", json: "rcanvas/rstyle.json.gz", title: "rstyle.cxx macro output" },
-      { name: "rtext_angle", json: "rcanvas/rtext_angle.json.gz", title: "rtext_angle.cxx macro output" },
-      { name: "rtext_align", json: "rcanvas/rtext_align.json.gz", title: "rtext_align.cxx macro output" },
-      { name: "rtext_font", json: "rcanvas/rtext_font.json.gz", title: "rtext_font.cxx macro output" },
-      { name: "subpads", json: "rcanvas/subpads.json.gz", title: "subpads.cxx macro output" },
-      { name: "symlog", json: "rcanvas/symlog.json.gz", title: "symlog.cxx macro output" },
-      { name: "th1_twoscales", json: "rcanvas/th1_twoscales.json.gz", title: "th1_twoscales.cxx macro output" },
-      { name: "tobject", json: "rcanvas/tobject.json.gz", title: "tobject.cxx macro output" }
+   v7 : [
+      { name: "axes", json: "v7/axes.json.gz", title: "RAxes drawings" },
+      { name: "rh1", json: "v7/rh1.json.gz", title: "draw_rh1.cxx macro output" },
+      { name: "rh1_twoaxes", json: "v7/rh1_twoaxes.json.gz", title: "draw_rh1_twoaxes.cxx macro output" },
+      { name: "rh2", json: "v7/rh2.json.gz", title: "draw_rh2.cxx macro output" },
+      { name: "rh2_colz", json: "v7/rh2_colz.json.gz", title: "draw_rh2_colz.cxx macro output" },
+      { name: "rh3", json: "v7/rh3.json.gz", title: "draw_rh3.cxx macro output" },
+      { name: "frame", json: "v7/frame.json.gz", title: "draw_frame.cxx macro output" },
+      { name: "legend", json: "v7/legend.json.gz", title: "draw_legend.cxx macro output" },
+      { name: "pave", json: "v7/pave.json.gz", title: "draw_pave.cxx macro output" },
+      { name: "subpads", json: "v7/subpads.json.gz", title: "draw_subpads.cxx macro output" },
+      { name: "text", json: "v7/text.json.gz", title: "draw_text.cxx macro output" },
+      { name: "v6", json: "v7/v6.json.gz", title: "draw_v6.cxx macro output" },
+      { name: "line", json: "v7/line.json.gz", title: "line.cxx macro output" },
+      { name: "box", json: "v7/box.json.gz", title: "box.cxx macro output" },
+      { name: "lineRStyle", json: "v7/lineRStyle.json.gz", title: "lineRStyle.cxx macro output" },
+      { name: "lineStyle", json: "v7/lineStyle.json.gz", title: "lineStyle.cxx macro output" },
+      { name: "lineWidth", json: "v7/lineWidth.json.gz", title: "lineWidth.cxx macro output" },
+      { name: "markerStyle", json: "v7/markerStyle.json.gz", title: "markerStyle.cxx macro output" },
+      { name: "pad", json: "v7/pad.json.gz", title: "pad.cxx macro output" },
+      { name: "symlog", json: "v7/symlog.json.gz", title: "draw_symlog.cxx macro output" }
    ],
    THStack : [
       { opt: "orig", file: "stacks.root", item: "stacks;1", title: "original example used for JSROOT testing since a while" },
-      { name: "json", json: "thstack.json.gz", title: "some special stack from JSON file" },
-      { name: "pads", file: "tutorials_hist.root", item: 'multicolor', opt: "pads,col", title: "Demonstrate pads option, using TH2 and col" }
+      { name: "json", json: "thstack.json.gz", title: "some special stack from JSON file" }
    ],
    TTree : [
       { name: "wjets", asurl: true, file: "WJets.root", item: "t;1/met", title: "Histogram data of branch with vectors" },
@@ -167,11 +141,11 @@ examples_more = {
    TGraph : [
      { name: "twopad", file:"graph_twopad.root", item: "c1;1", title: "two overlays pads with different axes" },
      { name: "macro2", file:"macro2.root", item: "c1;1" },
-     { name: "split", file: "gr2.root", item: "c1equi;1", title: "TGraph class with split line in legend" },
+     { name: "split", file: "gr2.root", item: "c1equi;1", title: "split line in legend, ignored" },
      { name: "approx", file: "tutorials_graphs.root", item: "approx;1", title: "Output of tutorials/graphs/approx.C" }
    ],
    TLatex : [
-      { name: "symbols", file: "latex.root", layout: "grid2x2", latex: "symbols", items: ['lva','ex1','ex2','ex3'], title: "Replace only known TLatex symbols" },
+      { name: "symbols", file: "latex.root", layout: "grid2x2", latex: "symbols", items: ['lva','ex1','ex2','ex3'], title: "Replace only known TLatex Disable TLatex symbols" },
       { name: "plain", file: "latex.root", layout: "grid2x2", latex: "off", items: ['lva','ex1','ex2','ex3'], title: "Disable TLatex processor completely" }
    ],
    TASImage : [

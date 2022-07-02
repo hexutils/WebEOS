@@ -98,17 +98,17 @@
    "use strict";
 
    /** @summary JSROOT version id
-     * @desc For the JSROOT release the string in format "major.minor.patch" like "6.3.0"
-     * For the ROOT release string is "ROOT major.minor.patch" like "ROOT 6.26.00" */
+     * @desc For the JSROOT release the string in format "major.minor.patch" like "6.0.0"
+     * For the ROOT release string is "ROOT major.minor.patch" like "ROOT 6.24.00" */
    JSROOT.version_id = "dev";
 
    /** @summary JSROOT version date
-     * @desc Release date in format day/month/year like "19/11/2021"*/
-   JSROOT.version_date = "16/12/2021";
+     * @desc Release date in format day/month/year like "14/01/2021"*/
+   JSROOT.version_date = "22/06/2021";
 
    /** @summary JSROOT version id and date
      * @desc Produced by concatenation of {@link JSROOT.version_id} and {@link JSROOT.version_date}
-     * Like "6.3.0 19/11/2021" */
+     * Like "6.0.0 14/01/2021" */
    JSROOT.version = JSROOT.version_id + " " + JSROOT.version_date;
 
    /** @summary Location of JSROOT scripts
@@ -139,7 +139,7 @@
    let browser = { isOpera: false, isFirefox: true, isSafari: false, isChrome: false, isWin: false, touches: false  };
 
    if ((typeof document !== "undefined") && (typeof window !== "undefined")) {
-      const script = document.currentScript;
+      let script = document.currentScript;
       if (script && (typeof script.src == "string")) {
          const pos = script.src.indexOf("scripts/JSRoot.core.");
          if (pos >= 0) {
@@ -160,19 +160,20 @@
    }
 
    _.sources = {
-         'd3'                   : { src: 'd3', libs: true, extract: "d3" },
+         'd3'                   : { src: 'd3', libs: true, extract: "d3", node: "d3" },
          'jquery'               : { src: 'jquery', libs: true,  extract: "$" },
          'jquery-ui'            : { src: 'jquery-ui', libs: true, extract: "$", dep: 'jquery' },
          'jqueryui-mousewheel'  : { src: 'jquery.mousewheel', onlymin: true, extract: "$", dep: 'jquery-ui' },
          'jqueryui-touch-punch' : { src: 'touch-punch', onlymin: true, extract: "$", dep: 'jquery-ui' },
          'rawinflate'           : { src: 'rawinflate', libs: true },
-         'zstd-codec'           : { src: '../../zstd/zstd-codec', onlymin: true, alt: "https://root.cern/js/zstd/zstd-codec.min.js", extract: "ZstdCodec", node: "zstd-codec" },
-         'mathjax'              : { src: '../../mathjax/3.2.0/es5/tex-svg', nomin: true,  alt: 'https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-svg.js', extract: "MathJax", node: "mathjax" },
+         'zstd-codec'           : { src: '../../zstd/zstd-codec.min', extract: "ZstdCodec", node: "zstd-codec" },
+         'mathjax'              : { src: 'https://cdn.jsdelivr.net/npm/mathjax@3.1.2/es5/tex-svg', extract: "MathJax", node: "mathjax" },
          'dat.gui'              : { src: 'dat.gui', libs: true, extract: "dat" },
-         'three'                : { src: 'three', libs: true, extract: "THREE" }
+         'three'                : { src: 'three', libs: true, extract: "THREE", node: "three" },
+         'threejs_jsroot'       : { src: 'three.extra', libs: true }
     };
 
-    ['core','base3d','csg','geobase','geom','geoworker','gpad','hierarchy','hist','hist3d','interactive','io','menu','jq2d','latex',
+    ['core', 'base3d','csg','geobase','geom','geoworker','gpad','hierarchy','hist','hist3d','interactive','io','menu','jq2d','latex',
       'math','more','openui5','painter','tree','v7gpad','v7hist','v7hist3d','v7more','webwindow']
          .forEach(item => _.sources[item] = { src: "JSRoot." + item });
 
@@ -180,12 +181,11 @@
       if (entry.src.indexOf('http') == 0)
          return _.amd ? entry.src : entry.src + ".js";
 
-      // WARNING, with sap mathjax and zstd-codec loaded directly from alternative location
       if (_.sap)
-         return entry.alt || "jsroot/scripts/" + entry.src + ((_.source_min || entry.libs || entry.onlymin) && !entry.nomin ? ".min" : "");
+         return "jsroot/scripts/" + entry.src + ((_.source_min || entry.libs || entry.onlymin) ? ".min" : "");
 
       let dir = (entry.libs && _.use_full_libs && !_.source_min) ? JSROOT.source_dir + "libs/" : JSROOT.source_dir + "scripts/",
-          ext = (_.source_min || (entry.libs && !_.use_full_libs) || entry.onlymin) && !entry.nomin ? ".min" : "";
+          ext = (_.source_min || (entry.libs && !_.use_full_libs) || entry.onlymin) ? ".min" : "";
       if (_.amd) return dir + entry.src + ext;
       let res = dir + entry.src + ext + ".js";
 
@@ -257,7 +257,7 @@
          Off: 0,
          /** @summary convert only known latex symbols */
          Symbols: 1,
-         /** @summary normal latex processing with svg */
+         /** @summary normal latex processing */
          Normal: 2,
          /** @summary use MathJax for complex cases, otherwise simple SVG text */
          MathJax: 3,
@@ -269,10 +269,6 @@
             switch(s){
                case "off": return this.Off;
                case "symbols": return this.Symbols;
-               case "normal":
-               case "latex":
-               case "exp":
-               case "experimental": return this.Normal;
                case "MathJax":
                case "mathjax":
                case "math": return this.MathJax;
@@ -466,7 +462,7 @@
       return udefined;
    }
 
-   async function jsroot_require(need, factoryFunc) {
+   function jsroot_require(need, factoryFunc) {
 
       if (!need && !factoryFunc)
          return Promise.resolve(null);
@@ -537,8 +533,8 @@
          return Promise.resolve(arr.length == 1 ? arr[0] : arr);
       }
 
-      // loading with sap.ui.require - but not mathjax or zstd
-      if (_.sap && (need[0] != "mathjax") && (need[0] != "zstd-codec")) {
+      // loading with sap.ui.require - but not mathjax
+      if (_.sap && (need[0] != "mathjax")) {
          let req = [], reqindx = [], res = [];
          for (let k = 0; k < need.length; ++k) {
             let m = _.modules[need[k]];
@@ -591,21 +587,10 @@
             let separ = (typeof thisSrc == 'string') ? thisSrc.indexOf('?') : -1;
             if (separ > 0) thisSrc = thisSrc.substr(0, separ);
             thisModule = thisSrc;
-            for (let mod in _.sources) {
-               let entry = _.sources[mod];
-               if (entry.not_jsroot && thisSrc) {
-                  let indx = thisSrc.indexOf(entry.src);
-                  if ((indx >= 0) && (entry.src.length + indx == thisSrc.length)) {
-                     let m = _.modules[mod];
-                     if (m && m.loading) m.ingore_first_finish = true;
-                     thisModule = mod;
-                     break;
-
-                  }
-               } else if (_.get_module_src(entry) == thisSrc) {
+            for (let mod in _.sources)
+               if (_.get_module_src(_.sources[mod]) == thisSrc) {
                   thisModule = mod; break;
                }
-            }
          }
          if (!thisModule)
             throw Error("Cannot define module for " + (thisSrc || "uncknown script"));
@@ -617,12 +602,6 @@
          // check if promise was returned
          if (res && (typeof res == 'object') && (typeof res.then == 'function'))
             return res.then(pres => finish_loading(m, pres));
-
-         // this is special case of non-jsroot modules, completion will be performed after factoryFunc
-         if (m.ingore_first_finish && m.waiting) {
-            delete m.ingore_first_finish;
-            return;
-         }
 
          m.module = res || 1; // just to have some value
          let waiting = m.waiting;
@@ -672,11 +651,7 @@
 
          if (!m.jsroot || m.extract)
             element.onload = () => finish_loading(m, m.extract ? globalThis[m.extract] : 1); // mark script loaded
-         element.onerror = () => {
-            element.remove();
-            if (m.alt) { m.src = m.alt; delete m.alt; load_module(req, m); }
-                  else { m.failure = true; req.failed(); }
-         }
+         element.onerror = () => { m.failure = true; req.failed(); }
       }
 
       function after_depend_load(req,d,m) {
@@ -698,11 +673,8 @@
                      failed: function(msg) { this.processed = true; if (this.reject) this.reject(Error(msg || "JSROOT.require failed")); } };
 
          if (req.factoryFunc && req.thisModule) {
-            if (!(_.modules[req.thisModule])) {
-               console.log('Introducing module', req.thisModule, 'need', need)
-
+            if (!(_.modules[req.thisModule]))
                _.modules[req.thisModule] = { jsroot: true, src: thisSrc, loading: true };
-            }
          }
 
          for (let k = 0; k < need.length; ++k) {
@@ -714,21 +686,18 @@
                let jsmodule = _.sources[need[k]];
 
                m = _.modules[need[k]] = {};
-               if (jsmodule && !jsmodule.not_jsroot) {
+               if (jsmodule) {
                   m.jsroot = true;
                   m.src = _.get_module_src(jsmodule, true);
                   m.extract = jsmodule.extract;
                   m.dep = jsmodule.dep; // copy dependence
-                  m.alt = jsmodule.alt; // alternative location
               } else {
                   m.src = need[k];
-                  // create entry in sources
-                  _.sources[need[k]] = { not_jsroot: true, src: need[k] };
                }
             }
 
             if (m.failure)
-               // module loading failed, no need to continue
+               // module loading failed, no nee to continue
                return req.failed(`Loading of module ${need[k]} failed`);
 
             if (m.dep) {
@@ -755,13 +724,15 @@
          if (!handler && !any_dep)
             return handle_func(req, true);
 
-         srcs.forEach(m => load_module(req, m));
+         srcs.forEach(m => load_module(req,m));
       }
 
       if (factoryFunc)
          analyze();
       else
-         return new Promise((resolve,reject) => analyze(resolve,reject));
+         return new Promise(function(resolve,reject) {
+            analyze(resolve,reject);
+         });
    }
 
    /** @summary Central method to load JSROOT functionality
@@ -804,50 +775,28 @@
      * @private */
    JSROOT.BIT = function(n) { return 1 << n; }
 
-
-   /** @summary Simple random generator with controlled seed
-     * @memberof JSROOT
-     * @private */
-   class TRandom {
-      constructor(i) {
-         if (i!==undefined) this.seed(i);
-      }
-      /** @summary Seed simple random generator */
-      seed(i) {
-         i = Math.abs(i);
-         if (i > 1e8)
-            i = Math.abs(1e8 * Math.sin(i));
-         else if (i < 1)
-            i *= 1e8;
-         this.m_w = Math.round(i);
-         this.m_z = 987654321;
-      }
-      /** @summary Produce random value between 0 and 1 */
-      random() {
-         if (this.m_z === undefined) return Math.random();
-         this.m_z = (36969 * (this.m_z & 65535) + (this.m_z >> 16)) & 0xffffffff;
-         this.m_w = (18000 * (this.m_w & 65535) + (this.m_w >> 16)) & 0xffffffff;
-         let result = ((this.m_z << 16) + this.m_w) & 0xffffffff;
-         result /= 4294967296;
-         return result + 0.5;
-      }
-   }
-
    /** @summary Seed simple random generator
      * @param {number} i seed value
-     * @deprecated Please use JSROOT.TRandom class
      * @private */
    JSROOT.seed = function(i) {
-      this.gRandom = new TRandom(i);
+      i = Math.abs(i);
+      if (i > 1e8) i = Math.abs(1e8 * Math.sin(i)); else
+      if (i < 1) i*=1e8;
+      this.m_w = Math.round(i);
+      this.m_z = 987654321;
    }
 
    /** @summary Simple random generator
      * @desc Works like Math.random(), but with configurable seed - see {@link JSROOT.seed}
      * @returns {number} random value between 0 (inclusive) and 1.0 (exclusive)
-     * @deprecated Please use JSROOT.TRandom class
      * @private */
    JSROOT.random = function() {
-      return this.gRandom ? this.gRandom.random() : Math.random();
+      if (this.m_z===undefined) return Math.random();
+      this.m_z = (36969 * (this.m_z & 65535) + (this.m_z >> 16)) & 0xffffffff;
+      this.m_w = (18000 * (this.m_w & 65535) + (this.m_w >> 16)) & 0xffffffff;
+      let result = ((this.m_z << 16) + this.m_w) & 0xffffffff;
+      result /= 4294967296;
+      return result + 0.5;
    }
 
    /** @summary Just copy (not clone) all fields from source to the target object
@@ -934,7 +883,7 @@
                case "Float64": arr = new Float64Array(value.len); break;
                default: arr = new Array(value.len); break;
             }
-            for (let k = 0; k < value.len; ++k) arr[k] = dflt;
+            for (let k=0;k<value.len;++k) arr[k] = dflt;
 
             if (value.b !== undefined) {
                // base64 coding
@@ -946,7 +895,7 @@
                if (arr.buffer) {
                   let dv = new DataView(arr.buffer, value.o || 0),
                       len = Math.min(buf.length, dv.byteLength);
-                  for (let k = 0; k < len; ++k)
+                  for (let k=0; k<len; ++k)
                      dv.setUint8(k, buf.charCodeAt(k));
                } else {
                   throw new Error('base64 coding supported only for native arrays with binary data');
@@ -1067,7 +1016,7 @@
       if (!json) return null;
       let arr = JSON.parse(json);
       if (arr && arr.length)
-         for (let i = 0; i < arr.length; ++i)
+         for (let i=0;i<arr.length;++i)
             arr[i] = JSROOT.parse(arr[i]);
       return arr;
    }
@@ -1368,11 +1317,11 @@
          return Promise.resolve(res);
       }
 
-      const match_url = src => {
+      function match_url(src) {
          if (src == url) return true;
          let indx = src.indexOf(url);
          return (indx > 0) && (indx + url.length == src.length) && (src[indx-1] == "/");
-      };
+      }
 
       if (isstyle) {
          let styles = document.getElementsByTagName('link');
@@ -1402,7 +1351,7 @@
 
       return new Promise((resolve, reject) => {
          element.onload = () => resolve(true);
-         element.onerror = () => { element.remove(); reject(Error(`Fail to load ${url}`)); };
+         element.onerror = () => reject(Error(`Fail to load ${url}`));
          document.getElementsByTagName("head")[0].appendChild(element);
       });
    }
@@ -1458,6 +1407,8 @@
          gui_kind = "gui";
       }
 
+      if (!nobrowser) requirements.push("jq2d");
+
       let user_scripts = d.get("autoload") || d.get("load");
 
       if (user_scripts) requirements.push("painter");
@@ -1502,7 +1453,7 @@
             create("TNamed", obj);
             create("TAttAxis", obj);
             extend(obj, { fNbins: 1, fXmin: 0, fXmax: 1, fXbins : [], fFirst: 0, fLast: 0,
-                          fBits2: 0, fTimeDisplay: false, fTimeFormat: "", fLabels: null, fModLabs: null });
+                                 fBits2: 0, fTimeDisplay: false, fTimeFormat: "", fLabels: null, fModLabs: null });
             break;
          case 'TAttLine':
             extend(obj, { fLineColor: 1, fLineStyle: 1, fLineWidth: 1 });
@@ -1527,8 +1478,8 @@
          case 'TPave':
             create("TBox", obj);
             extend(obj, { fX1NDC : 0., fY1NDC: 0, fX2NDC: 1, fY2NDC: 1,
-                          fBorderSize: 0, fInit: 1, fShadowColor: 1,
-                          fCornerRadius: 0, fOption: "blNDC", fName: "title" });
+                                 fBorderSize: 0, fInit: 1, fShadowColor: 1,
+                                 fCornerRadius: 0, fOption: "blNDC", fName: "title" });
             break;
          case 'TAttText':
             extend(obj, { fTextAngle: 0, fTextSize: 0, fTextAlign: 22, fTextColor: 1, fTextFont: 42});
@@ -1574,13 +1525,19 @@
             create("TAttLine", obj);
             create("TAttFill", obj);
             create("TAttMarker", obj);
-            extend(obj, { fBits: 8, fNcells: 0,
-                          fXaxis: create("TAxis"), fYaxis: create("TAxis"), fZaxis: create("TAxis"),
-                          fBarOffset: 0, fBarWidth: 1000, fEntries: 0.,
-                          fTsumw: 0., fTsumw2: 0., fTsumwx: 0., fTsumwx2: 0.,
-                          fMaximum: -1111., fMinimum: -1111, fNormFactor: 0., fContour: [],
-                          fSumw2: [], fOption: "", fFunctions: create("TList"),
-                          fBufferSize: 0, fBuffer: [], fBinStatErrOpt: 0, fStatOverflows: 2 });
+
+            extend(obj, {
+               fBits: 8,
+               fNcells: 0,
+               fXaxis: create("TAxis"),
+               fYaxis: create("TAxis"),
+               fZaxis: create("TAxis"),
+               fBarOffset: 0, fBarWidth: 1000, fEntries: 0.,
+               fTsumw: 0., fTsumw2: 0., fTsumwx: 0., fTsumwx2: 0.,
+               fMaximum: -1111., fMinimum: -1111, fNormFactor: 0., fContour: [],
+               fSumw2: [], fOption: "",
+               fFunctions: create("TList"),
+               fBufferSize: 0, fBuffer: [], fBinStatErrOpt: 0, fStatOverflows: 2 });
             break;
          case 'TH1I':
          case 'TH1F':
@@ -1624,7 +1581,7 @@
             create("TAttFill", obj);
             create("TAttMarker", obj);
             extend(obj, { fFunctions: create("TList"), fHistogram: null,
-                          fMaxSize: 0, fMaximum: -1111, fMinimum: -1111, fNpoints: 0, fX: [], fY: [] });
+                                 fMaxSize: 0, fMaximum: -1111, fMinimum: -1111, fNpoints: 0, fX: [], fY: [] });
             break;
          case 'TGraphAsymmErrors':
             create("TGraph", obj);
@@ -1633,16 +1590,16 @@
          case 'TMultiGraph':
             create("TNamed", obj);
             extend(obj, { fFunctions: create("TList"), fGraphs: create("TList"),
-                          fHistogram: null, fMaximum: -1111, fMinimum: -1111 });
+                                 fHistogram: null, fMaximum: -1111, fMinimum: -1111 });
             break;
          case 'TGraphPolargram':
             create("TNamed", obj);
             create("TAttText", obj);
             create("TAttLine", obj);
             extend(obj, { fRadian: true, fDegree: false, fGrad: false, fPolarLabelColor: 1, fRadialLabelColor: 1,
-                          fAxisAngle: 0, fPolarOffset: 0.04, fPolarTextSize: 0.04, fRadialOffset: 0.025, fRadialTextSize: 0.035,
-                          fRwrmin: 0, fRwrmax: 1, fRwtmin: 0, fRwtmax: 2*Math.PI, fTickpolarSize: 0.02,
-                          fPolarLabelFont: 62, fRadialLabelFont: 62, fCutRadial: 0, fNdivRad: 508, fNdivPol: 508 });
+                                 fAxisAngle: 0, fPolarOffset: 0.04, fPolarTextSize: 0.04, fRadialOffset: 0.025, fRadialTextSize: 0.035,
+                                 fRwrmin: 0, fRwrmax: 1, fRwtmin: 0, fRwtmax: 2*Math.PI, fTickpolarSize: 0.02,
+                                 fPolarLabelFont: 62, fRadialLabelFont: 62, fCutRadial: 0, fNdivRad: 508, fNdivPol: 508 });
             break;
          case 'TPolyLine':
             create("TObject", obj);
@@ -1654,24 +1611,24 @@
             create("TLine", obj);
             create("TAttText", obj);
             extend(obj, { fChopt: "", fFunctionName: "", fGridLength: 0,
-                          fLabelColor: 1, fLabelFont: 42, fLabelOffset: 0.005, fLabelSize: 0.035,
-                          fName: "", fNdiv: 12, fTickSize: 0.02, fTimeFormat: "",
-                          fTitle: "", fTitleOffset: 1, fTitleSize: 0.035,
-                          fWmax: 100, fWmin: 0 });
+                                 fLabelColor: 1, fLabelFont: 42, fLabelOffset: 0.005, fLabelSize: 0.035,
+                                 fName: "", fNdiv: 12, fTickSize: 0.02, fTimeFormat: "",
+                                 fTitle: "", fTitleOffset: 1, fTitleSize: 0.035,
+                                 fWmax: 100, fWmin: 0 });
             break;
          case 'TAttPad':
             extend(obj, { fLeftMargin: gStyle.fPadLeftMargin,
-                          fRightMargin: gStyle.fPadRightMargin,
-                          fBottomMargin: gStyle.fPadBottomMargin,
-                          fTopMargin: gStyle.fPadTopMargin,
-                          fXfile: 2, fYfile: 2, fAfile: 1, fXstat: 0.99, fYstat: 0.99, fAstat: 2,
-                          fFrameFillColor: gStyle.fFrameFillColor,
-                          fFrameFillStyle: gStyle.fFrameFillStyle,
-                          fFrameLineColor: gStyle.fFrameLineColor,
-                          fFrameLineWidth: gStyle.fFrameLineWidth,
-                          fFrameLineStyle: gStyle.fFrameLineStyle,
-                          fFrameBorderSize: gStyle.fFrameBorderSize,
-                          fFrameBorderMode: gStyle.fFrameBorderMode });
+                                 fRightMargin: gStyle.fPadRightMargin,
+                                 fBottomMargin: gStyle.fPadBottomMargin,
+                                 fTopMargin: gStyle.fPadTopMargin,
+                                 fXfile: 2, fYfile: 2, fAfile: 1, fXstat: 0.99, fYstat: 0.99, fAstat: 2,
+                                 fFrameFillColor: gStyle.fFrameFillColor,
+                                 fFrameFillStyle: gStyle.fFrameFillStyle,
+                                 fFrameLineColor: gStyle.fFrameLineColor,
+                                 fFrameLineWidth: gStyle.fFrameLineWidth,
+                                 fFrameLineStyle: gStyle.fFrameLineStyle,
+                                 fFrameBorderSize: gStyle.fFrameBorderSize,
+                                 fFrameBorderMode: gStyle.fFrameBorderMode });
             break;
          case 'TPad':
             create("TObject", obj);
@@ -1679,38 +1636,38 @@
             create("TAttFill", obj);
             create("TAttPad", obj);
             extend(obj, { fX1: 0, fY1: 0, fX2: 1, fY2: 1, fXtoAbsPixelk: 1, fXtoPixelk: 1,
-                          fXtoPixel: 1, fYtoAbsPixelk: 1, fYtoPixelk: 1, fYtoPixel: 1,
-                          fUtoAbsPixelk: 1, fUtoPixelk: 1, fUtoPixel: 1, fVtoAbsPixelk: 1,
-                          fVtoPixelk: 1, fVtoPixel: 1, fAbsPixeltoXk: 1, fPixeltoXk: 1,
-                          fPixeltoX: 1, fAbsPixeltoYk: 1, fPixeltoYk: 1, fPixeltoY: 1,
-                          fXlowNDC: 0, fYlowNDC: 0, fXUpNDC: 0, fYUpNDC: 0, fWNDC: 1, fHNDC: 1,
-                          fAbsXlowNDC: 0, fAbsYlowNDC: 0, fAbsWNDC: 1, fAbsHNDC: 1,
-                          fUxmin: 0, fUymin: 0, fUxmax: 0, fUymax: 0, fTheta: 30, fPhi: 30, fAspectRatio: 0,
-                          fNumber: 0, fLogx: gStyle.fOptLogx, fLogy: gStyle.fOptLogy, fLogz: gStyle.fOptLogz,
-                          fTickx: gStyle.fPadTickX,
-                          fTicky: gStyle.fPadTickY,
-                          fPadPaint: 0, fCrosshair: 0, fCrosshairPos: 0, fBorderSize: 2,
-                          fBorderMode: 0, fModified: false,
-                          fGridx: gStyle.fPadGridX,
-                          fGridy: gStyle.fPadGridY,
-                          fAbsCoord: false, fEditable: true, fFixedAspectRatio: false,
-                          fPrimitives: create("TList"), fExecs: null,
-                          fName: "pad", fTitle: "canvas" });
+                                 fXtoPixel: 1, fYtoAbsPixelk: 1, fYtoPixelk: 1, fYtoPixel: 1,
+                                 fUtoAbsPixelk: 1, fUtoPixelk: 1, fUtoPixel: 1, fVtoAbsPixelk: 1,
+                                 fVtoPixelk: 1, fVtoPixel: 1, fAbsPixeltoXk: 1, fPixeltoXk: 1,
+                                 fPixeltoX: 1, fAbsPixeltoYk: 1, fPixeltoYk: 1, fPixeltoY: 1,
+                                 fXlowNDC: 0, fYlowNDC: 0, fXUpNDC: 0, fYUpNDC: 0, fWNDC: 1, fHNDC: 1,
+                                 fAbsXlowNDC: 0, fAbsYlowNDC: 0, fAbsWNDC: 1, fAbsHNDC: 1,
+                                 fUxmin: 0, fUymin: 0, fUxmax: 0, fUymax: 0, fTheta: 30, fPhi: 30, fAspectRatio: 0,
+                                 fNumber: 0, fLogx: gStyle.fOptLogx, fLogy: gStyle.fOptLogy, fLogz: gStyle.fOptLogz,
+                                 fTickx: gStyle.fPadTickX,
+                                 fTicky: gStyle.fPadTickY,
+                                 fPadPaint: 0, fCrosshair: 0, fCrosshairPos: 0, fBorderSize: 2,
+                                 fBorderMode: 0, fModified: false,
+                                 fGridx: gStyle.fPadGridX,
+                                 fGridy: gStyle.fPadGridY,
+                                 fAbsCoord: false, fEditable: true, fFixedAspectRatio: false,
+                                 fPrimitives: create("TList"), fExecs: null,
+                                 fName: "pad", fTitle: "canvas" });
 
             break;
          case 'TAttCanvas':
             extend(obj, { fXBetween: 2, fYBetween: 2, fTitleFromTop: 1.2,
-                          fXdate: 0.2, fYdate: 0.3, fAdate: 1 });
+                                 fXdate: 0.2, fYdate: 0.3, fAdate: 1 });
             break;
          case 'TCanvas':
             create("TPad", obj);
             extend(obj, { fNumPaletteColor: 0, fNextPaletteColor: 0, fDISPLAY: "$DISPLAY",
-                          fDoubleBuffer: 0, fRetained: true, fXsizeUser: 0,
-                          fYsizeUser: 0, fXsizeReal: 20, fYsizeReal: 10,
-                          fWindowTopX: 0, fWindowTopY: 0, fWindowWidth: 0, fWindowHeight: 0,
-                          fCw: 500, fCh: 300, fCatt: create("TAttCanvas"),
-                          kMoveOpaque: true, kResizeOpaque: true, fHighLightColor: 5,
-                          fBatch: true, kShowEventStatus: false, kAutoExec: true, kMenuBar: true });
+                                 fDoubleBuffer: 0, fRetained: true, fXsizeUser: 0,
+                                 fYsizeUser: 0, fXsizeReal: 20, fYsizeReal: 10,
+                                 fWindowTopX: 0, fWindowTopY: 0, fWindowWidth: 0, fWindowHeight: 0,
+                                 fCw: 500, fCh: 300, fCatt: create("TAttCanvas"),
+                                 kMoveOpaque: true, kResizeOpaque: true, fHighLightColor: 5,
+                                 fBatch: true, kShowEventStatus: false, kAutoExec: true, kMenuBar: true });
             break;
          case 'TGeoVolume':
             create("TNamed", obj);
@@ -1804,7 +1761,7 @@
    JSROOT.createTGraph = (npoints, xpts, ypts) => {
       let graph = extend(create("TGraph"), { fBits: 0x408, fName: "graph", fTitle: "title" });
 
-      if (npoints > 0) {
+      if (npoints>0) {
          graph.fMaxSize = graph.fNpoints = npoints;
 
          const usex = (typeof xpts == 'object') && (xpts.length === npoints);
@@ -1829,7 +1786,7 @@
      * let stack = JSROOT.createTHStack(h1, h2, h3); */
    JSROOT.createTHStack = function() {
       let stack = create("THStack");
-      for (let i = 0; i < arguments.length; ++i)
+      for(let i=0; i<arguments.length; ++i)
          stack.fHists.Add(arguments[i], "");
       return stack;
    }
@@ -1843,7 +1800,7 @@
      * let mgr = JSROOT.createTMultiGraph(gr1, gr2, gr3); */
    JSROOT.createTMultiGraph = function() {
       let mgraph = create("TMultiGraph");
-      for (let i = 0; i < arguments.length; ++i)
+      for(let i=0; i<arguments.length; ++i)
           mgraph.fGraphs.Add(arguments[i], "");
       return mgraph;
    }
@@ -1908,6 +1865,7 @@
 
          m.evalPar = function(x, y) {
             if (! ('_func' in this) || (this._title !== this.fTitle)) {
+
               let _func = this.fTitle, isformula = false, pprefix = "[";
               if (_func === "gaus") _func = "gaus(0)";
               if (this.fFormula && typeof this.fFormula.fFormula == "string") {
@@ -1918,19 +1876,19 @@
                     _func = this.fFormula.fFormula;
                     pprefix = "[p";
                  }
-                 if (this.fFormula.fClingParameters && this.fFormula.fParams) 
-                    this.fFormula.fParams.forEach(pair => {
-                       let regex = new RegExp(`(\\[${pair.first}\\])`, 'g'),
-                           parvalue = this.fFormula.fClingParameters[pair.second];
-                       _func = _func.replace(regex, (parvalue < 0) ? `(${parvalue})` : parvalue);
-                    });
-                 
+                 if (this.fFormula.fClingParameters && this.fFormula.fParams) {
+                    for (let i=0;i<this.fFormula.fParams.length;++i) {
+                       let regex = new RegExp('(\\[' + this.fFormula.fParams[i].first + '\\])', 'g'),
+                           parvalue = this.fFormula.fClingParameters[this.fFormula.fParams[i].second];
+                       _func = _func.replace(regex, (parvalue < 0) ? "(" + parvalue + ")" : parvalue);
+                    }
+                 }
               }
 
               if ('formulas' in this)
-                 this.formulas.forEach(entry => {
-                   _func = _func.replaceAll(entry.fName, entry.fTitle);
-                 });
+                 for (let i=0;i<this.formulas.length;++i)
+                    while (_func.indexOf(this.formulas[i].fName) >= 0)
+                       _func = _func.replace(this.formulas[i].fName, this.formulas[i].fTitle);
               _func = _func.replace(/\b(abs)\b/g, 'TMath::Abs')
                            .replace(/TMath::Exp\(/g, 'Math.exp(')
                            .replace(/TMath::Abs\(/g, 'Math.abs(');
@@ -1939,8 +1897,6 @@
                  _func = _func.replace(/TMath::Prob\(/g, 'this._math.Prob(')
                               .replace(/TMath::Gaus\(/g, 'this._math.Gaus(')
                               .replace(/TMath::BreitWigner\(/g, 'this._math.BreitWigner(')
-                              .replace(/TMath::BetaDist\(/g, 'this._math.BetaDist(')
-                              .replace(/TMath::Beta\(/g, 'this._math.Beta(')
                               .replace(/xygaus\(/g, 'this._math.gausxy(this, x, y, ')
                               .replace(/gaus\(/g, 'this._math.gaus(this, x, ')
                               .replace(/gausn\(/g, 'this._math.gausn(this, x, ')
@@ -1949,17 +1905,19 @@
                               .replace(/landaun\(/g, 'this._math.landaun(this, x, ')
                               .replace(/ROOT::Math::/g, 'this._math.');
               }
-              for (let i = 0; i < this.fNpar; ++i)
-                _func = _func.replaceAll(pprefix + i + "]", `(${this.GetParValue(i)})`);
-                
+              for (let i=0;i<this.fNpar;++i) {
+                 let parname = pprefix + i + "]";
+                 while(_func.indexOf(parname) != -1)
+                    _func = _func.replace(parname, '('+this.GetParValue(i)+')');
+              }
               _func = _func.replace(/\b(sin)\b/gi, 'Math.sin')
                            .replace(/\b(cos)\b/gi, 'Math.cos')
                            .replace(/\b(tan)\b/gi, 'Math.tan')
                            .replace(/\b(exp)\b/gi, 'Math.exp')
                            .replace(/\b(pow)\b/gi, 'Math.pow')
                            .replace(/pi/g, 'Math.PI');
-              for (let n = 2; n < 10; ++n) 
-                 _func = _func.replaceAll(`x^${n}`, `Math.pow(x,${n})`); 
+              for (let n=2;n<10;++n)
+                 _func = _func.replace('x^'+n, 'Math.pow(x,'+n+')');
 
               if (isformula) {
                  _func = _func.replace(/x\[0\]/g,"x");
@@ -1969,7 +1927,8 @@
                  } else {
                     this._func = new Function("x", _func).bind(this);
                  }
-              } else if (this._typename === "TF2")
+              } else
+              if (this._typename==="TF2")
                  this._func = new Function("x", "y", "return " + _func).bind(this);
               else
                  this._func = new Function("x", "return " + _func).bind(this);
@@ -2247,7 +2206,6 @@
    JSROOT.create = create;
    JSROOT.extend = extend;
    JSROOT.addMethods = addMethods;
-   JSROOT.TRandom = TRandom;
 
    return JSROOT;
 

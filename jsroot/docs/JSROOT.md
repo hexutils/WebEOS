@@ -34,10 +34,8 @@ To automate files loading and objects drawing, one can provide number of URL par
 - json - name of JSON file with stored ROOT object like histogram or canvas
 - item - item name to be displayed
 - opt - drawing option for the item
-- items - array of items name to be displayed
+- items - array of items name
 - opts - array of drawing options for the items
-- expand - item name(s) to be expanded in the hierarchy browser
-- focus - item name to be focused on in the hierarchy browser
 - title - set browser title
 - layout - can be 'simple', 'flex', 'collapsible', 'tabs', 'gridNxM', 'horizNMK', 'vertNMK'
 - browser - layout of the browser 'fix' (default), 'float', 'no' (hidden), 'off' (fully disabled)
@@ -179,14 +177,12 @@ List of supported classes and draw options:
 [2](https://root.cern/js/latest/examples.htm#tgrapherrors_2),
 [3](https://root.cern/js/latest/examples.htm#tgrapherrors_3),
 [4](https://root.cern/js/latest/examples.htm#tgrapherrors_4),
-[5](https://root.cern/js/latest/examples.htm#tgrapherrors_5)
+[5](https://root.cern/js/latest/examples.htm#tgrapherrors_5),
 - TGraphAsymmErrors : [dflt](https://root.cern/js/latest/examples.htm#tgraphasymmerrors),
-- TGraphMultiErrors : [docu](https://root.cern/js/latest/examples.htm#tgraphmultierrors_canv),
 [z](https://root.cern/js/latest/examples.htm#tgraphasymmerrors_z) and other from TGraphErrors
 - TGraphPolar : [example](https://root.cern/js/latest/examples.htm#tgraphpolar)
 - TMultiGraph : [example](https://root.cern/js/latest/examples.htm#tmultigraph_c3), [exclusion](https://root.cern/js/latest/examples.htm#tmultigraph_exclusion)
 - TGraph2D : [example](https://root.cern/js/latest/examples.htm#tgraph2d)
-- TEfficiency : [docu](https://root.cern/js/latest/examples.htm#tefficiency_docu2)
 - TLatex : [example](https://root.cern/js/latest/examples.htm#tlatex_latex)
 - TMathText : [example](https://root.cern/js/latest/examples.htm#tlatex_math)
 - TCanvas : [example](https://root.cern/js/latest/examples.htm#tcanvas_roofit)
@@ -228,7 +224,6 @@ There are specific options which only can be used with JSROOT for TPad and TCanv
 - nopalette - ignore paletter stored with TCanvas
 - nocolors - ignore colors list stored with TCanvas
 - lcolors - use only locally colors list stored with TCanvas
-- nomargins - clear frame margins
 
 
 ## Superimposing draw objects
@@ -368,8 +363,6 @@ Following draw options could be specified (separated by semicolon or ';'):
    - rotate - enable automatic rotation of the geometry
    - trzVALUE - set transformation along Z axis (like trz50)
    - trrVALUE - set radial transformation (like trr100)
-   - ortho_camera - use THREE.OrthographicCamera without possibility to rotate it
-   - ortho_camera_rotate - use THREE.OrthographicCamera and enable it rotation
    - ctrl - show control UI from the beginning
    - tracks - show tracks from TGeoManager
    - showtop - show top-level volume of TGeoManager (default off)
@@ -894,21 +887,22 @@ JSROOT provides [example](https://root.cern/js/latest/demo/openui5/) showing usa
 
 ### Migration v5 -> v6
 
-In JSROOT v6 release many incompatible changes were done.
+In JSROOT v6 release some many incompatible changes were done.
 
-Main script was renamed to `JSRoot.core.js`. Old `JSRootCore.js` was deprecated and removed in v6.2.
-All URL parameters for main script ignored now, to load JSROOT functionality one should use `JSROOT.require` function.
-To create standard GUI, `JSROOT.buildGUI` function has to be used.
+Main script was renamed to `JSRoot.core.js`. Old `JSRootCore.js` script left to provide partial compatibility
+with old applications, but will be removed in future JSROOT v6.2. All URL parameters for main script will be
+ignored, to load JSROOT functionality one should use `JSROOT.require` function. To create standard GUI,
+`JSROOT.buildGUI` function has to be used.
 
 Instead of `JSROOT.JSONR_unref` one can use `JSROOT.parse`. If object is provided to `JSROOT.parse` it just replaces all
 references which were introduced by `TBufferJSON::ToJSON()` method.
 
 Instead of `JSROOT.console` one should use `console.log`. Instead of `JSROOT.alert` one should use `console.error`.
 
-Many settings were moved from `JSROOT.gStyle` to `JSROOT.settings` object. It was done to keep only TStyle-related members
+Many settings where moved from `JSROOT.gStyle` to `JSROOT.settings` object. It was done to keep only TStyle-related members
 in `JSROOT.gStyle`.
 
-Basic painter classes were renamed and made public:
+Painter classes were renamed and made public:
    - `JSROOT.TBasePainter` -> `JSROOT.BasePainter`
    - `JSROOT.TObjectPainter` -> `JSROOT.ObjectPainter`
 

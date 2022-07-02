@@ -186,13 +186,12 @@ JSROOT.define(['rawinflate'], () => {
      * @private */
    jsrio.R__unzip = function(arr, tgtsize, noalert, src_shift) {
 
-      const HDRSIZE = 9, totallen = arr.byteLength,
-           getChar = o => String.fromCharCode(arr.getUint8(o)),
-           getCode = o => arr.getUint8(o);
+      const HDRSIZE = 9, totallen = arr.byteLength;
+      let curr = src_shift || 0, fullres = 0, tgtbuf = null,
+          getChar = o => String.fromCharCode(arr.getUint8(o)),
+          getCode = o => arr.getUint8(o);
 
-      let curr = src_shift || 0, fullres = 0, tgtbuf = null;
-
-      const nextPortion = () => {
+      function NextPortion() {
 
          while (fullres < tgtsize) {
 
@@ -217,10 +216,10 @@ JSROOT.define(['rawinflate'], () => {
 
             const srcsize = HDRSIZE + ((getCode(curr + 3) & 0xff) | ((getCode(curr + 4) & 0xff) << 8) | ((getCode(curr + 5) & 0xff) << 16));
 
-            const uint8arr = new Uint8Array(arr.buffer, arr.byteOffset + curr + HDRSIZE + off + CHKSUM, Math.min(arr.byteLength - curr - HDRSIZE - off - CHKSUM, srcsize - HDRSIZE - CHKSUM));
+            let uint8arr = new Uint8Array(arr.buffer, arr.byteOffset + curr + HDRSIZE + off + CHKSUM, Math.min(arr.byteLength - curr - HDRSIZE - off - CHKSUM, srcsize - HDRSIZE - CHKSUM));
 
             if (fmt === "ZSTD")  {
-               const handleZsdt = ZstdCodec => {
+               function HandleZsdt(ZstdCodec) {
 
                   return new Promise((resolveFunc, rejectFunc) => {
 
@@ -246,7 +245,7 @@ JSROOT.define(['rawinflate'], () => {
                         if (!tgtbuf) tgtbuf = new ArrayBuffer(tgtsize);
                         let tgt8arr = new Uint8Array(tgtbuf, fullres);
 
-                        for(let i = 0; i < reslen; ++i)
+                        for(let i=0;i<reslen;++i)
                            tgt8arr[i] = data2[i];
 
                         fullres += reslen;
@@ -254,11 +253,11 @@ JSROOT.define(['rawinflate'], () => {
                         resolveFunc(true);
                      });
                   });
-               };
+               }
 
-               let promise = JSROOT.nodejs ? handleZsdt(require('zstd-codec').ZstdCodec)
-                                           : JSROOT.require('zstd-codec').then(codec => handleZsdt(codec));
-               return promise.then(() => nextPortion());
+               let promise = JSROOT.nodejs ? HandleZsdt(require('zstd-codec').ZstdCodec)
+                                           : JSROOT.require('zstd-codec').then(codec => HandleZsdt(codec));
+               return promise.then(() => NextPortion());
             }
 
             //  place for unpacking
@@ -279,9 +278,9 @@ JSROOT.define(['rawinflate'], () => {
          }
 
          return Promise.resolve(new DataView(tgtbuf));
-      };
+      }
 
-      return nextPortion();
+      return NextPortion();
    }
 
    // =================================================================================
@@ -350,7 +349,7 @@ JSROOT.define(['rawinflate'], () => {
 
       if ((ver.val <= 0) && ver.bytecnt && (ver.bytecnt >= 4)) {
          ver.checksum = this.ntou4();
-         if (!this.fFile.findStreamerInfo(undefined, undefined, ver.checksum)) {
+         if (!this.fFile.findSinfoCheckum(ver.checksum)) {
             // console.error(`Fail to find streamer info with check sum ${ver.checksum} version ${ver.val}`);
             this.o -= 4; // not found checksum in the list
             delete ver.checksum; // remove checksum
@@ -466,8 +465,7 @@ JSROOT.define(['rawinflate'], () => {
 
    /** @summary Reads array of n values from the I/O buffer */
    TBuffer.prototype.readFastArray = function(n, array_type) {
-      let array, i = 0, o = this.o;
-      const view = this.arr;
+      let array, i = 0, o = this.o, view = this.arr;
       switch (array_type) {
          case jsrio.kDouble:
             array = new Float64Array(n);
@@ -659,8 +657,8 @@ JSROOT.define(['rawinflate'], () => {
 
    /** @summary read class definition from I/O buffer */
    TBuffer.prototype.readClass = function() {
-      const classInfo = { name: -1 }, bcnt = this.ntou4(), startpos = this.o;
-      let tag;
+      let classInfo = { name: -1 }, tag = 0, bcnt = this.ntou4();
+      const startpos = this.o;
 
       if (!(bcnt & jsrio.kByteCountMask) || (bcnt == jsrio.kNewClassTag)) {
          tag = bcnt;
@@ -725,7 +723,7 @@ JSROOT.define(['rawinflate'], () => {
 
       if (obj._typename === undefined) obj._typename = classname;
 
-      const direct = jsrio.DirectStreamers[classname];
+      let direct = jsrio.DirectStreamers[classname];
       if (direct) {
          direct(this, obj);
          return obj;
@@ -733,13 +731,11 @@ JSROOT.define(['rawinflate'], () => {
 
       const ver = this.readVersion();
 
-      const streamer = this.fFile.getStreamer(classname, ver);
+      let streamer = this.fFile.getStreamer(classname, ver);
 
       if (streamer !== null) {
 
-         const len = streamer.length;
-
-         for (let n = 0; n < len; ++n)
+         for (let n = 0; n < streamer.length; ++n)
             streamer[n].func(this, obj);
 
       } else {
@@ -778,7 +774,7 @@ JSROOT.define(['rawinflate'], () => {
       if (typeof cycle != 'number') cycle = -1;
       let bestkey = null;
       for (let i = 0; i < this.fKeys.length; ++i) {
-         const key = this.fKeys[i];
+         let key = this.fKeys[i];
          if (!key || (key.fName!==keyname)) continue;
          if (key.fCycle == cycle) { bestkey = key; break; }
          if ((cycle < 0) && (!bestkey || (key.fCycle > bestkey.fCycle))) bestkey = key;
@@ -822,9 +818,9 @@ JSROOT.define(['rawinflate'], () => {
       let file = this.fFile;
 
       return file.readBuffer([this.fSeekKeys, this.fNbytesKeys]).then(blob => {
-         // Read keys of the top directory
+         //*-* -------------Read keys of the top directory
 
-         const buf = new TBuffer(blob, 0, file);
+         let buf = new TBuffer(blob, 0, file);
 
          buf.readTKey();
          const nkeys = buf.ntoi4();
@@ -875,11 +871,6 @@ JSROOT.define(['rawinflate'], () => {
          this.fAcceptRanges = false;
       }
 
-      if (this.fURL[this.fURL.length - 1] === "^") {
-         this.fURL = this.fURL.substr(0, this.fURL.length - 1);
-         this.fSkipHeadRequest = true;
-      }
-
       if (this.fURL[this.fURL.length - 1] === "-") {
          this.fURL = this.fURL.substr(0, this.fURL.length - 1);
          this.fUseStampPar = false;
@@ -907,7 +898,7 @@ JSROOT.define(['rawinflate'], () => {
     * @returns {Promise} after file keys are read
     * @private */
    TFile.prototype._open = function() {
-      if (!this.fAcceptRanges || this.fSkipHeadRequest)
+      if (!this.fAcceptRanges)
          return this.readKeys();
 
       return JSROOT.httpRequest(this.fURL, "head").then(res => {
@@ -1153,7 +1144,7 @@ JSROOT.define(['rawinflate'], () => {
       }
 
       for (let j = 0; j < this.fDirectories.length; ++j) {
-         const dir = this.fDirectories[j];
+         let dir = this.fDirectories[j];
          if (dir.dir_name != dirname) continue;
          if ((cycle !== undefined) && (dir.dir_cycle !== cycle)) continue;
          return dir;
@@ -1169,7 +1160,7 @@ JSROOT.define(['rawinflate'], () => {
       if (typeof cycle != 'number') cycle = -1;
       let bestkey = null;
       for (let i = 0; i < this.fKeys.length; ++i) {
-         const key = this.fKeys[i];
+         let key = this.fKeys[i];
          if (!key || (key.fName !== keyname)) continue;
          if (key.fCycle == cycle) { bestkey = key; break; }
          if ((cycle < 0) && (!bestkey || (key.fCycle > bestkey.fCycle))) bestkey = key;
@@ -1447,15 +1438,15 @@ JSROOT.define(['rawinflate'], () => {
          return file.readBuffer([file.fSeekKeys, file.fNbytesKeys, file.fSeekInfo, file.fNbytesInfo]);
       }).then(blobs => {
 
-         const buf4 = new TBuffer(blobs[0], 0, file);
+         let buf4 = new TBuffer(blobs[0], 0, file);
 
          buf4.readTKey(); //
          const nkeys = buf4.ntoi4();
          for (let i = 0; i < nkeys; ++i)
             file.fKeys.push(buf4.readTKey());
 
-         const buf5 = new TBuffer(blobs[1], 0, file),
-               si_key = buf5.readTKey();
+         let buf5 = new TBuffer(blobs[1], 0, file),
+            si_key = buf5.readTKey();
          if (!si_key)
             return Promise.reject(Error(`Fail to read StreamerInfo data in ${file.fURL}`));
 
@@ -1477,35 +1468,51 @@ JSROOT.define(['rawinflate'], () => {
       return this.readObject(dir_name, cycle, true);
    }
 
-   /** @summary Search streamer info
-     * @param {string} clanme - class name
-     * @param {number} [clversion] - class version
-     * @param {number} [checksum] - streamer info checksum, have to match when specified
-     * @private */
-   TFile.prototype.findStreamerInfo = function(clname, clversion, checksum) {
+   /** @summary Search for class streamer info
+    * @private */
+   TFile.prototype.findStreamerInfo = function(clname, clversion, clchecksum) {
+      if (this.fStreamerInfos)
+         for (let i = 0; i < this.fStreamerInfos.arr.length; ++i) {
+            let si = this.fStreamerInfos.arr[i];
+
+            // checksum is enough to identify class
+            if ((clchecksum !== undefined) && (si.fCheckSum === clchecksum)) return si;
+
+            if (si.fName !== clname) continue;
+
+            // checksum should match
+            if (clchecksum !== undefined) continue;
+
+            if ((clversion !== undefined) && (si.fClassVersion !== clversion)) continue;
+
+            return si;
+         }
+
+      return null;
+   }
+
+   /** @summary Search streamer info with provided checksum
+     * @param {number} checksum
+    * @private */
+   TFile.prototype.findSinfoCheckum = function(checksum) {
       if (!this.fStreamerInfos) return null;
 
-      const arr = this.fStreamerInfos.arr, len = arr.length;
+      let cache = this.fStreamerInfos.cache,
+         arr = this.fStreamerInfos.arr;
+      if (!cache) cache = this.fStreamerInfos.cache = {};
 
-      if (checksum !== undefined) {
-         let cache = this.fStreamerInfos.cache;
-         if (!cache) cache = this.fStreamerInfos.cache = {};
-         let si = cache[checksum];
-         if (si !== undefined) return si;
+      let si = cache[checksum];
+      if (si !== undefined) return si;
 
-         for (let i = 0; i < len; ++i) {
-            si = arr[i];
-            if (si.fCheckSum === checksum)
-               return cache[checksum] = si;
-         }
-         cache[checksum] = null; // checksum didnot found, do not try again
-      } else {
-         for (let i = 0; i < len; ++i) {
-            let si = arr[i];
-            if ((si.fName === clname) && ((si.fClassVersion === clversion) || (clversion === undefined))) return si;
+      for (let i = 0; i < arr.length; ++i) {
+         si = arr[i];
+         if (si.fCheckSum === checksum) {
+            cache[checksum] = si;
+            return si;
          }
       }
 
+      cache[checksum] = null; // checksum didnot found, do not try again
       return null;
    }
 

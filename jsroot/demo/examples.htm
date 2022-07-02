@@ -1,18 +1,11 @@
 <!DOCTYPE html>
-<html lang="en" prefix="og: https://ogp.me/ns#">
+<html lang="en">
    <head>
       <!-- As template three.js web site was used -->
       <meta charset="UTF-8">
       <title>JavaScript ROOT examples</title>
       <!-- link rel="shortcut icon" href="img/RootIcon.ico" -->
       <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
-      <meta property="og:title" content="JSROOT examples"/>
-      <meta property="og:type" content="website"/>
-      <meta property="og:description" content="Web page shows supported ROOT classes and correspondent draw options"/>
-      <meta property="og:image" content="../files/img/th2.png"/>
-      <meta property="og:image:type" content="image/png" />
-      <meta property="og:image:width" content="200" />
-      <meta property="og:image:height" content="150" />
       <style>
          * {
              box-sizing: border-box;
@@ -113,9 +106,8 @@
              filepath = "../files/",
              use_requirejs = false,
              use_openui5 = false,
-             extra_opts = "", // extra options like webgl=no or interactive=0
+             extra_opts = "", // extra options like webgl=no
              select_key = null, // select the only key like ?select=TH2
-             no_interactive = false, // disable interactivity
              use_zstd = true;
 
          let icon = document.createElement("link");
@@ -136,11 +128,6 @@
 
          if (window.location.search.indexOf("nowebgl") > 0)
             extra_opts = "&webgl=0";
-
-         if (window.location.search.indexOf("noint") > 0) {
-            no_interactive = true;
-            extra_opts += "&interactive=0";
-         }
 
          if ((window.location.host.indexOf('jsroot.gsi.de') < 0) &&
              (window.location.host.indexOf('root.cern') < 0)) {
@@ -205,14 +192,6 @@
             if (typeof JSROOT.cleanup === 'function')
                JSROOT.cleanup('viewer');
 
-            if (no_interactive && JSROOT.settings) {
-               JSROOT.settings.Tooltip = 0;
-               JSROOT.settings.ContextMenu = false;
-               JSROOT.settings.Zooming = false;
-               JSROOT.settings.MoveResize = false;
-               JSROOT.settings.DragAndDrop = false;
-            }
-
             if (durl.length > 0) {
                let viewer = document.getElementById( 'viewer_frame' );
                if (!viewer) {
@@ -221,7 +200,7 @@
                   viewer.id = "viewer_frame";
                   document.getElementById('viewer').appendChild(viewer);
                }
-               viewer.src = jsroot_path + durl + (opt.length > 0 ? ("&opt=" + opt) : "") + extra_opts;
+               viewer.src = jsroot_path + durl + (opt.length>0 ? ("&opt=" + opt) : "") + extra_opts;
                viewer.focus();
              } else {
 
@@ -239,20 +218,10 @@
              }
          };
 
-         function SetPageTitle(title) {
-            let arr = document.getElementsByTagName("meta");
-            for (let k=0;k<arr.length;++k) {
-               let elem = arr[k];
-               if (elem.getAttribute("property") == "og:title")
-                 elem.setAttribute("content", title);
-            }
-         }
-
          function SetListener(elem, shortname, durl, filename, itemname, opt, jsonname) {
              elem.addEventListener( 'click', function (event) {
                 event.preventDefault();
                 window.location.hash = shortname;
-                if (elem.title) SetPageTitle(elem.title);
                 ProcessClick(durl, filename, itemname, opt, jsonname);
             });
          };
@@ -337,8 +306,6 @@
             JSROOT.cleanup("viewer");
 
             if (url.length > 0) {
-               if (no_interactive) url += "&interactive=0";
-
                testfile = testobj = null;
                // if (keyid == 'TGeo') return RunBigTest(0);  // ignore TGeo URLs - too complex
 
@@ -418,16 +385,13 @@
 
                if (select_key && (key != select_key)) continue;
 
-               let header = document.createElement( 'h2' );
-               header.textContent = key;
-               content.appendChild( header );
-
-               if (window.location.hash == "#" + key.toLowerCase())
-                  header.scrollIntoView();
+               let div = document.createElement( 'h2' );
+               div.textContent = key;
+               content.appendChild( div );
 
                let url = "", filename = "", itemname = "", jsonname = "", style = "";
 
-               for (let n = 0; n<opts.length; ++n) {
+               for (let n=0; n<opts.length;++n) {
                   let entry = opts[n];
 
                   let shortname = key.toLowerCase().replace(" ","_");
@@ -444,9 +408,8 @@
                         url = ""; filename = entry.file;
                         if ((filename.indexOf("http:")<0) && (filename.indexOf("https:")<0)) filename = filepath + filename;
                      }
-                     if ('item' in entry) {
-                        url = ""; itemname = entry.item; style = entry.style;
-                     } else if ('items' in entry) {
+                     if ('item' in entry) { url = ""; itemname = entry.item; style = entry.style; } else
+                     if ('items' in entry) {
                         url = "?nobrowser&file=" + filename;
                         if (entry.layout) url += "&layout=" + entry.layout;
                         url += "&items=[" + entry.items.join(",") + "]";
@@ -462,13 +425,13 @@
 
                   if ('name' in entry)
                      aaa.textContent = entry.name;
-                  else if (opt != "")
+                  else
+                  if (opt != "")
                      aaa.textContent = opt;
                   else
                      aaa.textContent = "<dflt>";
 
-                  if (aaa.textContent != "<dflt>")
-                     shortname += "_" + aaa.textContent.toLowerCase().replace(" ","_");
+                  if (aaa.textContent != "<dflt>") shortname += "_" + aaa.textContent.toLowerCase().replace(" ","_");
 
                   let prefix = (entry.asurl === "browser") ? "?" : "?nobrowser&";
 
@@ -479,7 +442,7 @@
                         url = prefix + "file=" + filename + "&item=" + itemname;
                      if (entry.style) url += "&style=" + entry.style;
                      if (entry.mathjax) url += "&mathjax";
-                     if (entry.latex) url += "&latex=" + entry.latex;
+                     if (entry.latex) url += "&latex="+entry.latex;
                   }
 
                   if (url)
@@ -512,7 +475,6 @@
 
                   if (window.location.hash == "#" + shortname) {
                      aaa.focus();
-                     if (entry.title) SetPageTitle(entry.title);
                      ProcessClick(url, filename, itemname, opt, jsonname);
                   }
                }

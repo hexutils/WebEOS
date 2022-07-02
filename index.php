@@ -61,7 +61,6 @@ if( $_SERVER['QUERY_STRING'] ) {
 	$pos = strpos($_SERVER['REQUEST_URI'], $_SERVER['QUERY_STRING']);
 	$pruned_uri = substr($_SERVER['REQUEST_URI'],0,$pos-1);
 }
-//$pruned_uri = strtok($_SERVER['REQUEST_URI'], '?');
 $folder = str_replace($_SERVER['DOCUMENT_ROOT'], "", str_replace("index.php","",$pruned_uri));
 $script_path = substr_replace(dirname($_SERVER["SCRIPT_FILENAME"]), $_SERVER['CONTEXT_PREFIX'], 0, strlen($_SERVER['CONTEXT_DOCUMENT_ROOT']));
 $target_folder = substr_replace($pruned_uri, $_SERVER['CONTEXT_DOCUMENT_ROOT'], 0, strlen($_SERVER['CONTEXT_PREFIX']));
@@ -69,11 +68,11 @@ $script_path = str_replace("//","/","/".$script_path);
 chdir( $target_folder  )
 ?>
 
-<link rel="stylesheet" type="text/css" href="<?php echo $script_path."/.res/theme.css"; ?>" />
-<link rel="stylesheet" type="text/css" href="<?php echo $script_path."/.res/style.css"; ?>" />
-<script language="javascript" type="text/javascript" src="<?php echo $script_path."/.res/jquery.js" ?>" ></script>
-<script language="javascript" type="text/javascript" src="<?php echo $script_path."/.res/jquery-ui.js" ?>" ></script>
-<script language="javascript" type="text/javascript" src="<?php echo $script_path."/.res/style.js" ?>" ></script>
+<link rel="stylesheet" type="text/css" href="<?php echo $script_path."/.resources/theme.css"; ?>" />
+<link rel="stylesheet" type="text/css" href="<?php echo $script_path."/.resources/style.css"; ?>" />
+<script language="javascript" type="text/javascript" src="<?php echo $script_path."/.resources/jquery.js" ?>" ></script>
+<script language="javascript" type="text/javascript" src="<?php echo $script_path."/.resources/jquery-ui.js" ?>" ></script>
+<script language="javascript" type="text/javascript" src="<?php echo $script_path."/.resources/style.js" ?>" ></script>
 <script language="javascript" type="text/javascript">
 $(function() {
           $(".numbers-row").append('<span class="button">+</span>&nbsp;&nbsp;<span class="button">-</span>');
@@ -85,7 +84,6 @@ $(function() {
                                   if ($button.text() == "+") {
                                           var newVal = parseFloat(oldValue) + 1;
                                   } else {
-                                          // Don't allow decrementing below zero
                                           if (oldValue > 0) {
                                                   var newVal = parseFloat(oldValue) - 1;
                                           } else {
@@ -109,7 +107,9 @@ $(function() {
 <?php
 print "<div class=\"dirlinks\">\n";
 print "<h1 align='center'>".substr($folder,1,-1)." @ ".$_SERVER['SERVER_NAME']."</h1>\n";
-print "<h3 align='center'><a href=\"../\">[parent directory]</a></h3>\n";
+if ($pruned_uri != '/lkang/') {
+    print "<h3 align='center'><a href=\"../\">[ <span>&#8679;</span> parent directory <span>&#8679;</span> ]</a></h3>\n";
+}
 print "</div>\n";
 ?>
 <br>
@@ -120,7 +120,7 @@ $folders = array();
 $allfiles = glob("*");
 foreach (array_reverse($allfiles) as $filename) {
 	if (is_dir($filename)) {
-        if ($filename != '.res') {
+        if ($filename != '.resources') {
 		    $has_subs = true;
 		    array_push( $folders, $filename);
         }
@@ -133,7 +133,6 @@ print "</h2>\n";
 if ($has_subs) {
     foreach ($folders as $filename) {
 	    print "<a href=\"$filename\">[$filename]</a>";
-        // print " <a href=\"$filename\">[$filename]</a><br/>";
     }
 }
 else {
@@ -223,7 +222,6 @@ if ($_GET['noplots']) {
 	sort($filenames);
 	foreach ($filenames as $filename) {
 		if( ! $matchf($match,$filename) ) { continue; }
-		// if (isset($_GET['match']) && !fnmatch('*'.$_GET['match'].'*', $filename)) continue;
 		$path_parts = pathinfo($filename);
 		if (PHP_VERSION_ID < 50200) {
 			$path_parts['filename'] = str_replace('.'.$path_parts['extension'],"",$path_parts['basename']);
@@ -260,9 +258,7 @@ if ($_GET['noplots']) {
 		}
 		print "<div class='pic'>\n";
 		print "<h3><a href=\"$filename\">$short_filename</a></h3>";
-		// print "<a href=\"$filename\">";
 		print "<img src=\"$imgname\" style=\"border: none; width: 50ex; \">";
-		// print "</a>";
 		foreach ($other_exts as $ex) {
             $other_filename = $path_parts['filename'].$ex;
                 if (file_exists($other_filename)) {
@@ -283,7 +279,6 @@ if ($_GET['noplots']) {
 		}
 		if ($others) { print "<p>Also as ".implode(', ',$others)."</p>"; }
 		else { 
-            // print "<p>Also as [none]</p>"; 
         }
 		print "</div>";
 	}
@@ -298,21 +293,18 @@ print "<div class=\"dirlinks\">\n";
 print "<h2>Other files\n";
 print "</div>";
 ?>
-<!--<h2><a name="files">Other files</a></h2>-->
 <ul>
 <?php
 foreach ($allfiles as $filename) {
     if ($_GET['noplots'] || !in_array($filename, $displayed)) {
-	    // if (isset($_GET['match']) && !fnmatch('*'.$_GET['match'].'*', $filename)) continue;
 	    if( ! $matchf($match,$filename) ) { continue; }
 	    if( fnmatch("*_thumb.*", $filename) ) {
 		    continue;
 	    }
 	if ( substr($filename,-1) == "~" ) continue;
         if (is_dir($filename)) {
-		// print "<li>[DIR] <a href=\"$filename\">$filename</a></li>";
         } else {
-            if ( !in_array($filename, ['index.php','README.md'], true ) ) {
+            if ( !in_array($filename, ['index.php','login.php'], true ) ) {
                 if( fnmatch("*.root", $filename) ) {
                     print "<li><a href=\"$jsroot_instance?file=$folder$filename\">$filename</a></li>";
                 }

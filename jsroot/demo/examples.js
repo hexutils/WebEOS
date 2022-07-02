@@ -26,18 +26,16 @@ examples_main = {
      { opt: "tickx", title: "draw X ticks also on opposite frame side" },
      { opt: "ticky", title: "draw Y ticks also on opposite frame side" },
      { opt: "tickxy", title: "draw X and Y ticks also on opposite frame sides" },
-     { name: "axis", opt: "axis;nostat;maximum:1000", title: "draw only axes, configure maximum value, disable stats" },
      { opt: "inspect", asurl: true, file: "hsimple.root", item: "hpx;1", title: "universal object inspector, can be used for any class" },
      { name: "docu", file: "histpainter6.root", layout: "vert32", items: ["two_axis","draw_e1","draw_bar","draw_e34","draw_text"], title:"several TH1 examples from THistPainter documentation" },
      { name: "twoscales", url: "?nobrowser&file=$$$tutorials_hist.root&item=[twoscales/[1],twoscales/[3]]&opt=[hist,yaxis_red;line_red;y+]", title: "interactive second Y scale to draw axis for second histogram" },
      { name: "twoscales2", url: "?nobrowser&file=$$$tutorials_hist.root&item=[transpad/pad1/[1],transpad/pad2/[0]]&opt=[hist,Y+;yaxis_red]", title: "interactive second Y scale to draw axis for second histogram" }
    ],
    TH2 : [
-     { opt: "", file: "hsimple.root", item: "hpxpy;1", title: "default draw mode for TH2" },
-     { opt: "col", title: "color draw" },
+     { opt: "", file: "hsimple.root", item: "hpxpy;1" },
+     { opt: "col" },
      { opt: "colpal77", title: "example how color palette 77 can be used for drawing" },
      { opt: "colz", title: "color draw with palette" },
-     { opt: "colhz", title: "color draw with horizontal palette", reset_funcs: true },
      { opt: "acol", title: "disable axes drawing with col option" },
      { opt: "col_rx_ry", title: "reverse x and y axis with col drawing" },
      { name: "projx1", opt: "projx1,colz", title: "Draw X projection together with 2D plot", notest:true },
@@ -60,7 +58,6 @@ examples_main = {
      { opt: "lego0", title: "3D lego plot (without zeros)" },
      { opt: "lego1", title: "3D lego plot with red colors on x-sides", r3d: "svg" },
      { opt: "lego2", title: "3D lego plot with color levels" },
-     { opt: "lego2z", title: "3D lego plot with color levels and palette", reset_funcs: true },
      { opt: "lego3", title: "lego3 plot - lego1 without border lines" },
      { opt: "lego4", title: "lego4 plot - lego2 without border lines" },
      { opt: "text", title: "draw bins content as text, can be combined with col, box or scat options" },
@@ -71,17 +68,7 @@ examples_main = {
      { name: "box1", json: "hbox.json.gz", opt: "box1", title: "boxes, area proportional to bin content" },
      { name: "ctx_cty", opt: "col_ctx_cty", file: "QAresults.root", item: "PIDqa/PIDqa1/ITS/hNsigmaP_ITS_helium-3;1", title: "center title x (ctx) and center title y (cty)" },
      { name: "otx_oty", opt: "col_otx_oty", file: "QAresults.root", item: "PIDqa/PIDqa1/ITS/hNsigmaP_ITS_triton;1", title: "opposite title x (otx) and opposite title y (oty)" },
-     { name: "twoscales", url: "?nobrowser&file=$$$histpainter6.root&item=[draw_boxsame/[1],draw_boxsame/[2]]&opt=[box,box;x+y+;xaxis_red;yaxis_red]", title: "interactive second X and Y scale for second histogram" },
-     { name: "cjust", file: "cjust.root", item: "c1;1", title: "Demo for cjust draw option with fixed palette colors, see TPaletteAxis docu" }
-   ],
-   Candle : [
-     { name: "plot", file: "candleplot.root", item: "candleplot;1", title: "output from candleplot.C macro" },
-     { name: "decay", file: "candleplot.root", item: "candledecay;1", title: "output from candledecay.C macro" },
-     { name: "histo", file: "candleplot.root", layout: "vert21", items: ['candlehisto_c1', 'candlehisto_c2', 'candlehisto_c3'], title: "outputs from candlehisto.C macro" },
-     { name: "option", file: "candleplot.root", layout: "vert2", items: ['candleplotoption_c1', 'candleplotoption_c2'], title: "outputs from candleplotoption.C macro" },
-     { name: "stack", file: "candleplot.root", item: "candleplotstack;1", title: "output from candleplotstack.C macro" },
-     { name: "whiskers", file: "candleplot.root", item: "candleplotwhiskers;1", title: "output from candleplotwiskers.C macro" },
-     { name: "scaled", file: "candleplot.root", item: "candlescaled;1", title: "output from candleplotwiskers.C macro" }
+     { name: "twoscales", url: "?nobrowser&file=$$$histpainter6.root&item=[draw_boxsame/[1],draw_boxsame/[2]]&opt=[box,box;x+y+;xaxis_red;yaxis_red]", title: "interactive second X and Y scale for second histogram" }
    ],
    TH2Poly : [
       { name: "honeycomb", file: "th2poly.root", item: "honeycomb;1", opt: "l,col" },
@@ -148,7 +135,7 @@ examples_main = {
      { name:"roofit", file: "rf107.root", item: "rf107_plotstyles;1" },
      { name:"subpad", url: "?nobrowser&file=$$$rf107.root&item=rf107_plotstyles;1/[0]", title: "Draw only selected sub-pad from list of TCanvas list of primitives"  },
      { name:"zdemo", file: "zdemo.root", item: "zdemo;1" },
-     { name:"legend", asurl: true, file: "legends.root", item: "legends;1", title: "TCanvas with TLegend, use normal latex parser" },
+     { name:"legend", asurl: true, file: "legends.root", item: "legends;1", latex: "mathjax", title: "TCanvas with TLegend, use MathJax.js" },
      { name:"time", file: "ct.root", item: "ct;1" },
      { name:"2d+3d", file: "mix2d3d.root", item: "Canvas;1", title: "Mixture of 2D and 3D drawings on the same canvas (work properly in Firefox and Chrome)" },
      { name: "big", file: "bigcanvas.root", item: "big", title: "100 histograms in subpads, for performance testing" },
@@ -189,7 +176,6 @@ examples_main = {
    TGraph : [
      { opt: "", file: "graph.root", item: "Graph;1" },
      { opt: "L" },
-     { opt: "C" },
      { opt: "P" },
      { name: "star", opt:"*" },
      { opt: "LP" },
@@ -232,11 +218,6 @@ examples_main = {
      { opt:"[]" , title: "do not draw main error lines, only ends as brackets"},
      { opt:"2", title: "filled rec"  }
    ],
-   TGraphMultiErrors : [
-     { name: "canv", file: "graph.root", item: "c5", title: "Output of graph/gmultierrors.C macrot" },
-     { name: "X0" , file: "graph.root", item: "GraphMultiErrors;1", opt: "SPX0_z_5", title: "do not errors for points with X==0" },
-     { name: "Y0" , file: "graph.root", item: "GraphMultiErrors;1", opt: "SPY0_>_[]", title: "do not errors for points with Y==0" }
-   ],
    TGraphPolar : [
       { opt: "", file: "tutorials_graphs.root", item: "graphpolar", title: "Polar coordinates, output of tutorials/graphs/graphpolar.C" },
       { name: "tut2", item: "graphpolar2", title: "Polar coordinates, output of tutorials/graphs/graphpolar2.C" },
@@ -257,12 +238,6 @@ examples_main = {
       { opt: "err",  item: "cerr", title: "example of TGraph2DErrors, errors drawing" },
       { opt: "line",  item: "line", title: "line drawing with TGraph2D" }
    ],
-   TEfficiency : [
-      { name: "docu1", file: "efficiency.root", item: "eff1", title: "TEfficiency example from documentation" },
-      { name: "docu2", file: "efficiency.root", item: "eff2", title: "TEfficiency example from documentation" },
-      { name: "docu3", file: "efficiency.root", item: "eff3", title: "using TMath::BetaDist" },
-      { name: "docu4", file: "efficiency.root", item: "eff4", title: "drawing functions from TEfficiency" }
-   ],
    TLatex : [
      { name: "latex", file: "latex.root", layout: "grid2x2", items: ['lva','ex1','ex2','ex3'], title: "Internal TLatex processor" },
      { name: "mathjax", file: "latex.root", layout: "grid2x2", latex: "mathjax", items: ['lva','ex1','ex2','ex3'], title: "Render TLatex with MathJax.js" },
@@ -277,7 +252,7 @@ examples_main = {
      { name: "axis", file: "gaxis.root", item: "c1;1", title: "TGaxis class" },
      { name: "arrow", file: "arrow.root", item: "c1;1", title: "TArrow class" },
      { name: "sinfo", url: "?nobrowser&file=$$$hsimple.root&item=StreamerInfo", title: "List of streamer infos" },
-     { name: "3dmark", url: "?nobrowser&file=$$$mix2d3d.root&item=Canvas;1/pad4&opt=white;nomargins", title: "TPloyMarker3D class, reset pad margins" },
+     { name: "3dmark", url: "?nobrowser&file=$$$mix2d3d.root&item=Canvas;1/pad4&opt=white", title: "TPloyMarker3D class" },
      { name: "profile2d", file: "profile2d.root", item: "c1;1", title: "TProfile2D class" },
      { name: "spline", file: "tutorials_graphs.root", item: 'splines_test',  title: "TSpline3 and TSpline5 classes, tutorials/graphs/splines_test.C" },
      { name: "polyline", file: "polyline.root", item: "can;1", title: "TPolyLine class (produced with graphics/triangles.C)" },

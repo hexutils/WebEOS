@@ -19,7 +19,6 @@
 }
 
 .jsroot .h_tree a {
-    color: inherit;
     white-space: nowrap;
     text-decoration: none;
     vertical-align: top;
@@ -601,7 +600,6 @@
    font-size: 12px;
    font-family: Verdana;
    pointer-events: all;
-   box-sizing: initial;
 }
 
 .jsroot_browser_btns {
@@ -639,16 +637,6 @@
    font-size: 20px;
 }
 
-.jsroot_browser_resize {
-   position: absolute;
-   right: 3px;
-   bottom: 3px;
-   margin-bottom: 0px;
-   margin-right: 0px;
-   opacity: 0.5;
-   cursor: se-resize;
-}
-
 .jsroot_float_browser {
 	border: solid 3px white;
 }
@@ -658,10 +646,6 @@
    overflow: hidden;
    margin: 0;
    border: 0;
-}
-
-.jsroot_drag_area {
-   background-color: #007fff;
 }
 
 .jsroot_inspector {

@@ -13,20 +13,15 @@ It is tailored to people working in High Energy Physics that use ROOT (http://ro
 
 1. cd into your web folder
 
-        cd <my-path>
-        
+        cd '/eos/user/l/lkang/www/'
+
 1. Clone this repository
 
-        git clone https://github.com/musella/php-plots.git .
-        
-1. Copy the example/htaccess file into .htaccess and edit its content to suit your needs.
- 
-        cp -p example/htaccess .htaccess
-        $EDITOR .htacces
+        git clone https://github.com/lk11235/php-plots.git .
 
 1. Open the web folder into your browser.
 
-1. Enjoy.
+1. Profit.
 
 
 # Features
@@ -43,4 +38,4 @@ It is tailored to people working in High Energy Physics that use ROOT (http://ro
 
 # Example
 
-https://musella.web.cern.ch/musella/php-plots
+https://kang.docs.cern.ch/

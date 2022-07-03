@@ -16,18 +16,6 @@
 # Require adfs-group "cms-private"
 
 
-## Password protect this page ###############################################################
-##
-## Uncomment if you want to use .htpasswd to protect this page
-#
-#<Files index.php>
-#AuthName "Password Required"
-#AuthType Basic
-#AuthUserFile /eos/home-l/lkang/www/research/.htpasswd
-#Require valid-user
-#</Files>
-
-
 ## Enable directory browsing ################################################################
 ##
 ## This will be propagated to all subdirectories below the one containing the .htaccess file

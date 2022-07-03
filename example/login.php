@@ -93,7 +93,7 @@ print "</div>\n";
 <br>
 <?php
 print '<span class="img-container"> <!-- Inline parent element -->';
-print '<img src=".resources/.security.png" alt="">';
+print '<img src=".resources/.never_told_anyone.png" alt="">';
 print '</span>';
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $pwd = trim($_POST['fname']);

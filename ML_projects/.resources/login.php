@@ -92,26 +92,22 @@ print "</div>\n";
 </form>
 <br>
 <?php
+print '<span class="img-container"> <!-- Inline parent element -->';
+print '<img src=".resources/.security.png" alt="">';
+print '</span>';
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $pwd = trim($_POST['fname']);
     $salted = crypt(($pwd), strrev($wkdir));
     $master = crypt(($pwd), strrev($pwd));
-    $hashfile = fopen('.resources/rainbow', 'r');
-    $rainbow = file('.resources/rainbow', FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);    
+    $rainbow = file('.resources/.rainbow', FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);    
     $user = array($salted, $master);
     if ( count(array_intersect($user, $rainbow))>0 ) {
         if ( file_exists('index.php') ) {
             header("Location: index.php");
         }
-        else {
-            header("Location: /lkang/index.php");
-        }
     }
     #print "<p align='center'>".$salted."<br><br>".$master."</p>";
 }
-print '<span class="img-container"> <!-- Inline parent element -->';
-print '<img src=".resources/security.png" alt="">';
-print '</span>';
 ?>
 
 </body>

@@ -65,6 +65,7 @@ $folder = str_replace($_SERVER['DOCUMENT_ROOT'], "", str_replace("index.php","",
 $script_path = substr_replace(dirname($_SERVER["SCRIPT_FILENAME"]), $_SERVER['CONTEXT_PREFIX'], 0, strlen($_SERVER['CONTEXT_DOCUMENT_ROOT']));
 $target_folder = substr_replace($pruned_uri, $_SERVER['CONTEXT_DOCUMENT_ROOT'], 0, strlen($_SERVER['CONTEXT_PREFIX']));
 $script_path = str_replace("//","/","/".$script_path);
+$script_path = rtrim($script_path, '/');
 chdir( $target_folder  )
 ?>
 

@@ -14,9 +14,9 @@ function password() {
         echo($p);
     }
 
-$resourcepath = "/lkang";
 $jsroot_instance = "/jsroot";
 $pruned_uri = $_SERVER['REQUEST_URI'];
+$resourcepath = str_replace($wkdir, "", $script_path);
 $resourcepath = rtrim($resourcepath, '/');
 if( $_SERVER['QUERY_STRING'] ) {
     $pos = strpos($_SERVER['REQUEST_URI'], $_SERVER['QUERY_STRING']);

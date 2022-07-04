@@ -1,19 +1,19 @@
-php-plots
-=========
+WebEOS File Browser
+===================
 
-PHP-based web index for image displaying.
+A PHP-based interface for displaying images, opening interactive plots, and browsing data files. 
 
 Original code from Giovanni Petrucciani (@gpetruc) and others. Modified by Lucas Kang (@lkang).
 
-This project contains a web index script to help visualizing folders with many images.
+This project contains a web index script to visualize densely populated folders and an optional login script to lock chosen directories. 
 
-It is tailored to people that use [ROOT](http://root.cern.ch) and [Plotly](https://plotly.com/) to store/visualize data.
+It is tailored to people that use [ROOT](http://root.cern.ch/), [SWAN](https://swan.web.cern.ch/), and [Plotly](https://plotly.com/) to store/process/visualize data.
 
 # Setup
 
 1. cd into your web folder
 
-        cd '/eos/user/[$USER initial]/[$USER]/www/'
+        cd '/eos/user/[$USER-first-initial]/[$USER]/www/'
 
 1. Clone this repository
 
@@ -41,9 +41,9 @@ It is tailored to people that use [ROOT](http://root.cern.ch) and [Plotly](https
 
 1. Password protect directories (technically brute-forceable if salt-based hashing is reverse-engineered).
 
-1. Owner can make master passwords or passwords that only unlock particular directories.
+1. Allows both master passwords and passwords for individual directories.
 
-1. Owner can produce custom passwords for different guests which unlock unique subsets of directories.
+1. Generate custom passwords for different guests that unlock tailored subsets of directories.
 
 # Example
 

@@ -5,9 +5,9 @@ A PHP-based interface for displaying images, opening interactive plots, and brow
 
 Original code from Giovanni Petrucciani (@gpetruc) and others. Modified by Lucas Kang (@lkang).
 
-This project contains a web index script to visualize densely populated folders and an optional login script to lock chosen directories. 
+This project visualizes densely populated folders and includes an optional login script to lock chosen directories. 
 
-It is tailored to people that use [ROOT](http://root.cern.ch/), [SWAN](https://swan.web.cern.ch/), and [Plotly](https://plotly.com/) to store/process/visualize data.
+It is tailored for those who use [ROOT](http://root.cern.ch/), [SWAN](https://swan.web.cern.ch/), and [Plotly](https://plotly.com/) to store/process/visualize data.
 
 # Setup
 
@@ -35,15 +35,15 @@ It is tailored to people that use [ROOT](http://root.cern.ch/), [SWAN](https://s
 
 1. Overlay content of .txt version on mouse hover.
 
-1. Display root files using [JSROOT](https://root.cern.ch/js/).
+1. Display .root files using [JSROOT](https://root.cern.ch/js/).
 
-1. Display html interactive plots generated with [Plotly](https://plotly.com/).
+1. Display .html interactive plots generated with [Plotly](https://plotly.com/).
 
 1. Password protect directories (technically brute-forceable if salt-based hashing is reverse-engineered).
 
-1. Allows both master passwords and passwords for individual directories.
+1. Allows both master passwords and passwords which unlock individual directories.
 
-1. Generate custom passwords for different guests that unlock tailored subsets of directories.
+1. Generate custom passwords for different guests that unlock unique subsets of directories.
 
 # Example
 

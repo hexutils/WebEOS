@@ -54,7 +54,8 @@ function get_bookmarks($filename,$target="_blank",$rowlen=12,$opentable="<table>
         return $ret;
 }
 
-$resourcepath = "/lkang";
+$resourcepath = str_replace($wkdir, "", $script_path);
+$resourcepath = rtrim($resourcepath, '/');
 $jsroot_instance = "/jsroot";
 $pruned_uri = $_SERVER['REQUEST_URI'];
 if( $_SERVER['QUERY_STRING'] ) {

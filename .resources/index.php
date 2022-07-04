@@ -107,8 +107,8 @@ $(function() {
 <br>
 <?php
 print "<div class=\"dirlinks\">\n";
-print "<h1 align='center'>".substr($folder,1,-1)." @ ".$_SERVER['SERVER_NAME']."</h1>\n";
-if ($pruned_uri != '/lkang/') {
+print "<h1 align='center'>/".substr($folder,1,-1)." @ ".$_SERVER['SERVER_NAME']."</h1>\n";
+if ( !in_array($pruned_uri, ['/lkang/','/'], true ) ) {
     print "<h3 align='center'><a href=\"../\">[ <span>&#8679;</span> parent directory <span>&#8679;</span> ]</a></h3>\n";
 }
 print "</div>\n";

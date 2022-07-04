@@ -35,13 +35,13 @@ It is tailored to people that use [ROOT](http://root.cern.ch) and [Plotly](https
 
 1. Overlay content of .txt version on mouse hover.
 
-1. Display root files using [JSROOT](https://root.cern.ch/js/)
+1. Display root files using [JSROOT](https://root.cern.ch/js/).
 
-1. Display html interactive plots generated with [Plotly](https://plotly.com/)
+1. Display html interactive plots generated with [Plotly](https://plotly.com/).
 
-1. Password protect individual directories (hash-protected but brute-forcable)
+1. Password protect individual directories (salt-based hashing but technically brute-forceable if reverse-engineered).
 
-1. Make passwords that only work on particular directories or make master passwords
+1. User can make master passwords or passwords that only unlock particular directories.
 
 # Example
 

@@ -24,6 +24,7 @@ $folder = str_replace($_SERVER['DOCUMENT_ROOT'], "", str_replace("index.php","",
 $script_path = substr_replace(dirname($_SERVER["SCRIPT_FILENAME"]), $_SERVER['CONTEXT_PREFIX'], 0, strlen($_SERVER['CONTEXT_DOCUMENT_ROOT']));
 $target_folder = substr_replace($pruned_uri, $_SERVER['CONTEXT_DOCUMENT_ROOT'], 0, strlen($_SERVER['CONTEXT_PREFIX']));
 $script_path = str_replace("//","/","/".$script_path);
+$script_path = rtrim($script_path, '/');
 chdir( $target_folder )
 ?>
 
@@ -43,7 +44,6 @@ $(function() {
                                   if ($button.text() == "+") {
                                           var newVal = parseFloat(oldValue) + 1;
                                   } else {
-                                          // Don't allow decrementing below zero
                                           if (oldValue > 0) {
                                                   var newVal = parseFloat(oldValue) - 1;
                                           } else {
@@ -76,8 +76,8 @@ $(function() {
 $wkdir = str_replace("/login.ph", "", substr($folder,1,-1));
 
 print "<div class=\"dirlinks\">\n";
-print "<h1 align='center'>".$wkdir." @ ".$_SERVER['SERVER_NAME']."</h1>\n";
-if ($pruned_uri != '/lkang/') {
+print "<h1 align='center'>/".$wkdir." @ ".$_SERVER['SERVER_NAME']."</h1>\n";
+if ( !in_array($pruned_uri, ['/lkang/','/'], true ) ) {
     print "<h3 align='center'><a href=\"../\">[ <span>&#8679;</span> parent directory <span>&#8679;</span> ]</a></h3>\n";
 }
 print "</div>\n";

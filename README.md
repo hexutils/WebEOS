@@ -39,9 +39,11 @@ It is tailored to people that use [ROOT](http://root.cern.ch) and [Plotly](https
 
 1. Display html interactive plots generated with [Plotly](https://plotly.com/).
 
-1. Password protect individual directories (salt-based hashing but technically brute-forceable if reverse-engineered).
+1. Password protect directories (technically brute-forceable if salt-based hashing is reverse-engineered).
 
-1. User can make master passwords or passwords that only unlock particular directories.
+1. Owner can make master passwords or passwords that only unlock particular directories.
+
+1. Owner can produce custom passwords for different guests which unlock unique subsets of directories.
 
 # Example
 

@@ -17,7 +17,7 @@ It is tailored to people that use [ROOT](http://root.cern.ch) and [Plotly](https
 
 1. Clone this repository
 
-        git clone https://github.com/lk11235/php-plots.git .
+        git clone git@github.com:lk11235/php-plots.git .
 
 1. Open the web folder into your browser.
 

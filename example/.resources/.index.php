@@ -61,7 +61,7 @@ if( $_SERVER['QUERY_STRING'] ) {
 	$pos = strpos($_SERVER['REQUEST_URI'], $_SERVER['QUERY_STRING']);
 	$pruned_uri = substr($_SERVER['REQUEST_URI'],0,$pos-1);
 }
-$folder = str_replace($_SERVER['DOCUMENT_ROOT'], "", str_replace("index.php","",$pruned_uri));
+$folder = str_replace($_SERVER['DOCUMENT_ROOT'], "", str_replace(".index.php","",$pruned_uri));
 $script_path = substr_replace(dirname($_SERVER["SCRIPT_FILENAME"]), $_SERVER['CONTEXT_PREFIX'], 0, strlen($_SERVER['CONTEXT_DOCUMENT_ROOT']));
 $target_folder = substr_replace($pruned_uri, $_SERVER['CONTEXT_DOCUMENT_ROOT'], 0, strlen($_SERVER['CONTEXT_PREFIX']));
 $script_path = str_replace("//","/","/".$script_path);
@@ -305,9 +305,12 @@ foreach ($allfiles as $filename) {
 	if ( substr($filename,-1) == "~" ) continue;
         if (is_dir($filename)) {
         } else {
-            if ( !in_array($filename, ['index.php','login.php'], true ) ) {
+            if ( !in_array($filename, ['README.md'], true ) ) {
                 if( fnmatch("*.root", $filename) ) {
                     print "<li><a href=\"$jsroot_instance?file=$folder$filename\">$filename</a></li>";
+                }
+                elseif( fnmatch("*.ipynb", $filename) ) {
+                    #print "<li><a href=\"$filename\">$filename</a></li>";
                 }
                 else {
                     print "<li><a href=\"$filename\">$filename</a></li>";

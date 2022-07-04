@@ -73,7 +73,7 @@ $(function() {
 <body>
 <br>
 <?php
-$wkdir = str_replace("/login.ph", "", substr($folder,1,-1));
+$wkdir = str_replace("/.login.ph", "", substr($folder,1,-1));
 
 print "<div class=\"dirlinks\">\n";
 print "<h1 align='center'>/".$wkdir." @ ".$_SERVER['SERVER_NAME']."</h1>\n";
@@ -93,7 +93,7 @@ print "</div>\n";
 <br>
 <?php
 print '<span class="img-container"> <!-- Inline parent element -->';
-print '<img src=".resources/.never_told_anyone.png" alt="">';
+print '<img src=".resources/.security.png" alt="">';
 print '</span>';
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $pwd = trim($_POST['fname']);
@@ -102,8 +102,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $rainbow = file('.resources/.rainbow', FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);    
     $user = array($salted, $master);
     if ( count(array_intersect($user, $rainbow))>0 ) {
-        if ( file_exists('index.php') ) {
-            header("Location: index.php");
+        if ( file_exists('.index.php') ) {
+            header("Location: .index.php");
         }
     }
     #print "<p align='center'>".$salted."<br><br>".$master."</p>";

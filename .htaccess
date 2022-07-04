@@ -29,4 +29,4 @@ Options +Indexes
 ##
 ## Put below the path to your index.php (starting from the server root)
 #
-DirectoryIndex login.php index.php index.html index.htm /lkang/index.php
+DirectoryIndex .login.php .index.php index.html index.htm /lkang/.index.php

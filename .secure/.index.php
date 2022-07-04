@@ -54,7 +54,7 @@ function get_bookmarks($filename,$target="_blank",$rowlen=12,$opentable="<table>
         return $ret;
 }
 
-
+$resourcepath = "/lkang";
 $jsroot_instance = "/jsroot";
 $pruned_uri = $_SERVER['REQUEST_URI'];
 if( $_SERVER['QUERY_STRING'] ) {
@@ -69,11 +69,11 @@ $script_path = rtrim($script_path, '/');
 chdir( $target_folder  )
 ?>
 
-<link rel="stylesheet" type="text/css" href="<?php echo $script_path."/.resources/theme.css"; ?>" />
-<link rel="stylesheet" type="text/css" href="<?php echo $script_path."/.resources/style.css"; ?>" />
-<script language="javascript" type="text/javascript" src="<?php echo $script_path."/.resources/jquery.js" ?>" ></script>
-<script language="javascript" type="text/javascript" src="<?php echo $script_path."/.resources/jquery-ui.js" ?>" ></script>
-<script language="javascript" type="text/javascript" src="<?php echo $script_path."/.resources/style.js" ?>" ></script>
+<link rel="stylesheet" type="text/css" href="<?php echo $resourcepath."/.resources/theme.css"; ?>" />
+<link rel="stylesheet" type="text/css" href="<?php echo $resourcepath."/.resources/style.css"; ?>" />
+<script language="javascript" type="text/javascript" src="<?php echo $resourcepath."/.resources/jquery.js" ?>" ></script>
+<script language="javascript" type="text/javascript" src="<?php echo $resourcepath."/.resources/jquery-ui.js" ?>" ></script>
+<script language="javascript" type="text/javascript" src="<?php echo $resourcepath."/.resources/style.js" ?>" ></script>
 <script language="javascript" type="text/javascript">
 $(function() {
           $(".numbers-row").append('<span class="button">+</span>&nbsp;&nbsp;<span class="button">-</span>');
@@ -108,7 +108,7 @@ $(function() {
 <?php
 print "<div class=\"dirlinks\">\n";
 print "<h1 align='center'>/".substr($folder,1,-1)." @ ".$_SERVER['SERVER_NAME']."</h1>\n";
-if ( !in_array($pruned_uri, ['/lkang/','/'], true ) ) {
+if ( !in_array($pruned_uri, [$resourcepath.'/','/'], true ) ) {
     print "<h3 align='center'><a href=\"../\">[ <span>&#8679;</span> parent directory <span>&#8679;</span> ]</a></h3>\n";
 }
 print "</div>\n";

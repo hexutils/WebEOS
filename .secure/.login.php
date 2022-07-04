@@ -14,6 +14,7 @@ function password() {
         echo($p);
     }
 
+$resourcepath = "/lkang";
 $jsroot_instance = "/jsroot";
 $pruned_uri = $_SERVER['REQUEST_URI'];
 if( $_SERVER['QUERY_STRING'] ) {
@@ -28,11 +29,11 @@ $script_path = rtrim($script_path, '/');
 chdir( $target_folder )
 ?>
 
-<link rel="stylesheet" type="text/css" href="<?php echo $script_path."/.resources/theme.css"; ?>" />
-<link rel="stylesheet" type="text/css" href="<?php echo $script_path."/.resources/style.css"; ?>" />
-<script language="javascript" type="text/javascript" src="<?php echo $script_path."/.resources/jquery.js" ?>" ></script>
-<script language="javascript" type="text/javascript" src="<?php echo $script_path."/.resources/jquery-ui.js" ?>" ></script>
-<script language="javascript" type="text/javascript" src="<?php echo $script_path."/.resources/style.js" ?>" ></script>
+<link rel="stylesheet" type="text/css" href="<?php echo $resourcepath."/.resources/theme.css"; ?>" />
+<link rel="stylesheet" type="text/css" href="<?php echo $resourcepath."/.resources/style.css"; ?>" />
+<script language="javascript" type="text/javascript" src="<?php echo $resourcepath."/.resources/jquery.js" ?>" ></script>
+<script language="javascript" type="text/javascript" src="<?php echo $resourcepath."/.resources/jquery-ui.js" ?>" ></script>
+<script language="javascript" type="text/javascript" src="<?php echo $resourcepath."/.resources/style.js" ?>" ></script>
 <script language="javascript" type="text/javascript">
 $(function() {
           $(".numbers-row").append('<span class="button">+</span>&nbsp;&nbsp;<span class="button">-</span>');
@@ -77,7 +78,7 @@ $wkdir = str_replace("/.login.ph", "", substr($folder,1,-1));
 
 print "<div class=\"dirlinks\">\n";
 print "<h1 align='center'>/".$wkdir." @ ".$_SERVER['SERVER_NAME']."</h1>\n";
-if ( !in_array($pruned_uri, ['/lkang/','/'], true ) ) {
+if ( !in_array($pruned_uri, [$resourcepath.'/','/'], true ) ) {
     print "<h3 align='center'><a href=\"../\">[ <span>&#8679;</span> parent directory <span>&#8679;</span> ]</a></h3>\n";
 }
 print "</div>\n";
@@ -93,20 +94,20 @@ print "</div>\n";
 <br>
 <?php
 print '<span class="img-container"> <!-- Inline parent element -->';
-print '<img src=".resources/.security.png" alt="">';
+print '<img src="'.$resourcepath.'/.resources/.password/.security.png" alt="">';
 print '</span>';
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $pwd = trim($_POST['fname']);
     $salted = crypt(($pwd), strrev($wkdir));
     $master = crypt(($pwd), strrev($pwd));
-    $rainbow = file('.resources/.rainbow', FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);    
+    $rainbow = file($_SERVER['DOCUMENT_ROOT'].'/.resources/.password/.rainbow', FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);    
     $user = array($salted, $master);
     if ( count(array_intersect($user, $rainbow))>0 ) {
         if ( file_exists('.index.php') ) {
             header("Location: .index.php");
         }
     }
-    #print "<p align='center'>".$salted."<br><br>".$master."</p>";
+#print "<p align='center'>Directory specific: ".$salted."<br><br>Directory non-specific: ".$master."</p>";
 }
 ?>
 

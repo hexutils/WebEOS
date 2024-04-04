@@ -189,15 +189,15 @@ print "</div>\n";
 </form></p>
 <div id="piccont">
 <?php
-$matchf = matchall;
+$matchf = 'matchall';
 $match = "";
-if( isset($_GET['match']) ) {
+if (isset($_GET["match"]) && empty($_GET["match"])) {
 	$match = $_GET['match'];
 	if ( isRegex($match) ) {
-		$matchf = preg_match;
+		$matchf = 'preg_match';
 		$match = $match;
 	} else {
-		$matchf = fnmatch;
+		$matchf = 'fnmatch';
 		$match = '*'.$match.'*';
 	}
 }
